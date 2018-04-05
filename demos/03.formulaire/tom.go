@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type Hello struct{}
@@ -17,7 +18,7 @@ func (h Hello) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		fmt.Fprint(w, "Bonjour, ", r.Form["userName"][0], ".\n")
 		i, err := strconv.Atoi(r.Form["birthYear"][0])
-		i = 2018 - i
+		i = time.Now().Year() - i
 		if err != nil {
 			fmt.Println("Error:", err)
 		} else {
