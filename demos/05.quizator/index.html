@@ -1,0 +1,23 @@
+<html>
+
+<head>
+    <title></title>
+</head>
+
+<body>
+    <form action="/answer/{{.Pos}}" method="post">
+        {{.Question}}
+        <br /> Answer:
+        <input type="text" name="answer">
+        <br />
+        <input type="submit" value="Answer">
+    </form>
+    <p>
+        responce rate: {{.Percent}}
+        <br /> right: {{.Right}}
+        <br /> wrong: {{.Wrong}}
+        <br />
+    </p>
+</body>
+
+</html>
