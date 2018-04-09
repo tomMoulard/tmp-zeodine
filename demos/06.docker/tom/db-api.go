@@ -102,7 +102,7 @@ func setupDB() {
 	if err != nil {
 		panic(err.Error())
 	}
-
+	fmt.Println("Database connected!")
 	// defer the close till after the main function has finished
 	// executing
 	defer db.Close()
@@ -110,6 +110,7 @@ func setupDB() {
 	// Creating a new database
 	_, err = db.Exec("CREATE DATABASE zeodine")
 	if err != nil {
+		// fmt.Println(err)
 		panic(err)
 	}
 	fmt.Println("Database created")
@@ -123,6 +124,7 @@ func setupDB() {
 	// Creating a new table to insert some elements
 	_, err = db.Exec("CREATE TABLE zeodine.example ( id integer, data varchar(32) )")
 	if err != nil {
+		fmt.Println(err)
 		panic(err)
 	}
 	fmt.Println("Table created")
@@ -130,9 +132,9 @@ func setupDB() {
 
 func main() {
 	if os.Getenv("MYSQL_PORT_3306_TCP_PORT") == "" {
-		dataSource = "root:secret@tcp(127.0.0.1:3306)/"
+		dataSource = "tom:multipass@tcp(127.0.0.1:3306)/"
 	} else {
-		dataSource = "root:secret@tcp(" + os.Getenv("MYSQL_PORT_3306_TCP_ADDR") +
+		dataSource = "tom:multipass@tcp(" + os.Getenv("MYSQL_PORT_3306_TCP_ADDR") +
 			":" + os.Getenv("MYSQL_PORT_3306_TCP_PORT") + ")/"
 	}
 
