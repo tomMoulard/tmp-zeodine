@@ -37,13 +37,13 @@ I'm mapping the port 80 on my computer with the port 9000 of the container
 # MySQL Docker
 
 ```bash
-docker run --name mysql-perso -e MYSQL_ROOT_PASSWORD=zeodine -d mysql
+docker run --name mysql-perso -e MYSQL_ROOT_PASSWORD=zeodine --publish 3306:3360 -d mysql
 ```
 
 To access the server:
 
 ```bash
-docker run --name mysql-perso -e MYSQL_ROOT_PASSWORD=root --publish 3306:3306 -d mysql
+docker exec -it some-mysql bash
 ```
 
 To access the database:
@@ -59,3 +59,9 @@ CREATE USER tom@localhost
 IDENTIFIED BY 'multipass';
 ```
 
+then, run the api:
+
+```bash
+go run db-api.go
+
+```
