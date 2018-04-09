@@ -3,17 +3,24 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 )
 
-var db *sql.DB
 var id int = 0
 
 func showTable(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	// Connecting to db
+	db, err := sql.Open("mysql", "tom:multipass@tcp(127.0.0.1:3306)/")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
 	// Query the table
 	que, err := db.Query("SELECT * FROM zeodine.example")
 	if err != nil {
@@ -32,10 +39,17 @@ func showTable(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func add(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	// Connecting to db
+	db, err := sql.Open("mysql", "tom:multipass@tcp(127.0.0.1:3306)/")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
 	// Inserting some stuff
 	i := strconv.Itoa(id)
 	ins, err := db.Query(
-		"INSERT INTO example VALUES (" + i + ",'" + ps.ByName("name") + "')")
+		"INSERT INTO zeodine.example VALUES (" + i + ",'" + ps.ByName("name") + "')")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -46,31 +60,43 @@ func add(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func rm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	// Connecting to db
+	db, err := sql.Open("mysql", "tom:multipass@tcp(127.0.0.1:3306)/")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
 	// Deleting some stuff
 	ins, err := db.Query(
-		"DELETE FROM example WHERE id = " + ps.ByName("id") + ")")
+		"DELETE FROM zeodine.example WHERE id = " + ps.ByName("id"))
 	if err != nil {
 		fmt.Println(err)
 	}
 	defer ins.Close()
 
-	fmt.Fprintln(w, "You've just deleted the name corresponding of the id:", id)
+	fmt.Fprintln(w, "You've just deleted the name corresponding of the id:", ps.ByName("id"))
 
 }
 
 func quit(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	// Connecting to db
+	db, err := sql.Open("mysql", "tom:multipass@tcp(127.0.0.1:3306)/")
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
 	// Dropping database
-	_, err := db.Exec("DROP DATABASE zeodine")
+	_, err = db.Exec("DROP DATABASE zeodine")
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("Database DROPED")
+	os.Exit(1) // Shutdown api
 }
 
-func main() {
+func setupDB() {
 	// Connecting to db
-	var err error
-	db, err = sql.Open("mysql", "tom:multipass@tcp(127.0.0.1:3306)/")
+	db, err := sql.Open("mysql", "tom:multipass@tcp(127.0.0.1:3306)/")
 	// if there is an error opening the connection, handle it
 	if err != nil {
 		panic(err.Error())
@@ -99,6 +125,10 @@ func main() {
 		panic(err)
 	}
 	fmt.Println("Table created")
+}
+
+func main() {
+	go setupDB()
 
 	// Routing
 	router := httprouter.New()
