@@ -6,15 +6,16 @@ import (
 	"net/http"
 )
 
+// Hello
 type Hello struct{}
 
 func (h Hello) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	dat, err := ioutil.ReadFile(r.URL.Path[1:])
 	if err != nil {
 		fmt.Fprintln(w, "Something went wrong: ", err)
-	} else {
-		fmt.Fprint(w, string(dat))
+		return
 	}
+	fmt.Fprint(w, string(dat))
 
 }
 
