@@ -3,24 +3,41 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/julienschmidt/httprouter"
 )
 
 var id int = 0
 var dataSource string
+var db *sql.DB
+var err error
 
-func showTable(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func init() {
+
+	fmt.Println("Initializing the database...")
+
+	dataSource = "tom:multipass@tcp(db:3306)/"
+
+	fmt.Printf("dataSource = %v\n", dataSource)
+
 	// Connecting to db
-	db, err := sql.Open("mysql", dataSource)
+	db, err = sql.Open("mysql", dataSource)
 	if err != nil {
 		panic(err.Error())
 	}
-	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+}
+
+func showTable(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	// Query the table
 	que, err := db.Query("SELECT * FROM zeodine.example")
@@ -40,12 +57,6 @@ func showTable(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func add(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// Connecting to db
-	db, err := sql.Open("mysql", dataSource)
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
 
 	// Inserting some stuff
 	i := strconv.Itoa(id)
@@ -61,12 +72,7 @@ func add(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func rm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	// Connecting to db
-	db, err := sql.Open("mysql", dataSource)
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
+
 	// Deleting some stuff
 	ins, err := db.Query(
 		"DELETE FROM zeodine.example WHERE id = " + ps.ByName("id"))
@@ -80,14 +86,9 @@ func rm(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func quit(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	// Connecting to db
-	db, err := sql.Open("mysql", dataSource)
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
+
 	// Dropping database
-	_, err = db.Exec("DROP DATABASE zeodine")
+	_, err := db.Exec("DROP DATABASE zeodine")
 	if err != nil {
 		panic(err)
 	}
@@ -96,22 +97,12 @@ func quit(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func setupDB() {
-	// Connecting to db
-	db, err := sql.Open("mysql", dataSource)
-	// if there is an error opening the connection, handle it
-	if err != nil {
-		panic(err.Error())
-	}
-	fmt.Println("Database connected!")
-	// defer the close till after the main function has finished
-	// executing
-	defer db.Close()
 
 	// Creating a new database
-	_, err = db.Exec("CREATE DATABASE zeodine")
+	_, err := db.Exec("CREATE DATABASE zeodine")
 	if err != nil {
 		// fmt.Println(err)
-		panic(err)
+		log.Printf("A la création de la database zeodine, j'ai obtenu l'erreur : %v\n", err)
 	}
 	fmt.Println("Database created")
 
@@ -131,14 +122,9 @@ func setupDB() {
 }
 
 func main() {
-	if os.Getenv("MYSQL_PORT_3306_TCP_PORT") == "" {
-		dataSource = "tom:multipass@tcp(127.0.0.1:3306)/"
-	} else {
-		dataSource = "tom:multipass@tcp(" + os.Getenv("MYSQL_PORT_3306_TCP_ADDR") +
-			":" + os.Getenv("MYSQL_PORT_3306_TCP_PORT") + ")/"
-	}
+	defer db.Close()
 
-	go setupDB()
+	setupDB()
 
 	// Routing
 	router := httprouter.New()

@@ -15,14 +15,15 @@ services:
         - MYSQL_DATABASE=zeodine 
         - MYSQL_USER=tom 
         - MYSQL_PASSWORD=multipass 
-    ports:
-      - "3306:3306"
     labels:
       - "traefik.frontend.rule=Host:mysql.docker.localhost"
       # networks:
     #   - myNet
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+   
     ports:
       - "8081:8081"
     depends_on:
