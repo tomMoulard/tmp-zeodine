@@ -11,9 +11,9 @@ func printPage(w http.ResponseWriter, r *http.Request) {
 	file, err := os.Open("www" + r.URL.Path)
 	if err != nil {
 		io.WriteString(w, "Fichier non présent")
-	} else {
-		io.Copy(w, file)
+		return
 	}
+	io.Copy(w, file)
 
 }
 
