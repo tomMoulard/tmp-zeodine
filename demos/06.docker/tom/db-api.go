@@ -90,16 +90,6 @@ func (dbm DbManager) quit(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	os.Exit(1) // Shutdown api
 }
 
-func (dbm DbManager) pingDB() bool {
-	time.Sleep(time.Second * 5)
-	err := dbm.db.Ping()
-	if err != nil {
-		log.Println(err.Error())
-		return false
-	}
-	return true
-}
-
 func (dbm DbManager) setupDB() {
 	log.Println("Initializing the database...")
 
@@ -117,10 +107,16 @@ func (dbm DbManager) setupDB() {
 	var pinged bool = false
 	for i := 0; i < 3 && !pinged; i++ {
 		log.Println("Connecting to database ... try:", i)
-		if dbm.pingDB() {
+		time.Sleep(time.Second * 5)
+		err := dbm.db.Ping()
+		if err != nil {
+			log.Println(err.Error())
+			pinged = false
+		} else {
 			pinged = true
 		}
 	}
+
 	if !pinged {
 		log.Println("Could not connect to db in time")
 		os.Exit(0)
