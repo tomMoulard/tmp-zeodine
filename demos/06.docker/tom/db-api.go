@@ -23,9 +23,11 @@ type DbManager struct {
 func (dbm DbManager) showTable(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 	// Query the table
+	//
 	que, err := dbm.db.Query("SELECT * FROM zeodine.example")
 	if err != nil {
 		log.Println(err)
+		// panic(err)
 	}
 	fmt.Fprintln(w, "Table content:")
 	for que.Next() {
@@ -34,9 +36,11 @@ func (dbm DbManager) showTable(w http.ResponseWriter, r *http.Request, _ httprou
 		err = que.Scan(&id, &name)
 		if err != nil {
 			log.Println(err)
+			// panic(err)
 		}
 		fmt.Fprintln(w, id, ":", name)
 	}
+	// log.Println("queried")
 }
 
 func (dbm DbManager) add(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
@@ -90,7 +94,7 @@ func (dbm DbManager) quit(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	os.Exit(1) // Shutdown api
 }
 
-func (dbm DbManager) setupDB() {
+func (dbm DbManager) setupDB() DbManager {
 	log.Println("Initializing the database...")
 
 	dbm.dataSource = "tom:multipass@tcp(db:3306)/"
@@ -102,15 +106,14 @@ func (dbm DbManager) setupDB() {
 	if dbm.err != nil {
 		panic(dbm.err.Error())
 	}
-	defer dbm.db.Close()
 
 	var pinged bool = false
 	for i := 0; i < 3 && !pinged; i++ {
 		log.Println("Connecting to database ... try:", i)
-		time.Sleep(time.Second * 5)
 		err := dbm.db.Ping()
 		if err != nil {
 			log.Println(err.Error())
+			time.Sleep(time.Second * 5)
 			pinged = false
 		} else {
 			pinged = true
@@ -124,6 +127,7 @@ func (dbm DbManager) setupDB() {
 	log.Println("Connected")
 	// Creating a new database
 	_, dbm.err = dbm.db.Exec("CREATE DATABASE IF NOT EXISTS zeodine")
+	// _, dbm.err = dbm.db.Exec("CREATE DATABASE zeodine")
 	if dbm.err != nil {
 		// log.Println(err)
 		log.Printf("Error when creating db: %v\n", dbm.err)
@@ -142,12 +146,16 @@ func (dbm DbManager) setupDB() {
 		log.Println("Error when creating table:", dbm.err)
 	}
 	log.Println("Table ready to be used")
+
+	return dbm
 }
 
 func main() {
 	var dbm DbManager
 
-	dbm.setupDB()
+	dbm = dbm.setupDB()
+
+	defer dbm.db.Close()
 
 	// Routing
 	router := httprouter.New()
