@@ -4,50 +4,77 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
+	"os"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func main() {
-	var dataSource string
+type myBDD struct {
+	dataSource string
+	db         *sql.DB
+}
 
-	fmt.Println("20 sec")
-	time.Sleep(20 * time.Second)
+func chooseRandomString() string {
+	svrStrings := []string{"toto", "tom", "arnaud", "charle", "brahim", "lisa"}
+	nb := rand.Intn(len(svrStrings))
+	return svrStrings[nb]
+}
 
-	dataSource = "arnaud:nono@tcp(db:3306)/"
-
-	db, err := sql.Open("mysql", dataSource)
+func (mdb myBDD) initialise() myBDD {
+	var err error
+	mdb.dataSource = "arnaud:nono@tcp(db:3306)/"
+	mdb.db, err = sql.Open("mysql", mdb.dataSource)
 	if err != nil {
 		fmt.Println("Erreur lors de l'ouverture de la BDD")
 		log.Fatal(err)
 	}
-	fmt.Println("BDD ouverte " + dataSource)
-	defer db.Close()
+	fmt.Println("BDD ouverte " + mdb.dataSource)
+	return mdb
+}
 
-	err = db.Ping()
-	if err != nil {
-		fmt.Println("Erreur lors du ping")
-		panic(err.Error())
+func main() {
+	var mdb myBDD
+	var err error
+	mdb = mdb.initialise()
+
+	defer mdb.db.Close()
+	i := 0
+
+	for i < 3 {
+		err = mdb.db.Ping()
+		if err != nil {
+			fmt.Println("On attend 5 sec")
+			time.Sleep(5 * time.Second)
+			i++
+		} else {
+			i = 10
+		}
+	}
+
+	if i == 3 {
+		fmt.Println("Connexion à la ddb trop longue")
+		os.Exit(1)
 	}
 
 	/*
-		_, err = db.Exec("CREATE DATABASE test")
+		_, err = mdb.db.Exec("CREATE DATABASE test")
 		if err != nil {
 			fmt.Println("Erreur lors de l'addition d'une BDD")
 			log.Fatal(err)
 		}
 		fmt.Println("BDD créer")
 
-		_, err = db.Exec("USE test")
+		_, err = mdb.db.Exec("USE test")
 		if err != nil {
 			fmt.Println("Erreur lors du use")
 			log.Fatal(err)
 		}
 		fmt.Println("USE test")
 	*/
-	_, err = db.Exec("CREATE TABLE bd1.example (id integer, name varchar(32))")
+	_, err = mdb.db.Exec("CREATE TABLE bd1.example (id integer, name varchar(32))")
 	if err != nil {
 		fmt.Println("Table déjà existante")
 
@@ -55,19 +82,21 @@ func main() {
 		fmt.Println("Table créée")
 	}
 
-	_, err = db.Exec("USE bd1")
+	_, err = mdb.db.Exec("USE bd1")
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("Table bd1 selectionné")
 
-	stmt, err := db.Prepare("INSERT INTO example(name) VALUES(?)")
+	stmt, err := mdb.db.Prepare("INSERT INTO example(id, name) VALUES(?, ?)")
 	if err != nil {
 		fmt.Println("Erreur du statement")
 		log.Fatal(err)
 	}
 
-	res, err := stmt.Exec("Arnaud")
+	nb := rand.Intn(100)
+	str := chooseRandomString()
+	res, err := stmt.Exec(nb, str)
 	if err != nil {
 		fmt.Println("Erreur de l'insertion")
 		log.Fatal(err)
@@ -79,35 +108,18 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Arnaud ajouté %i", lastID)
+	fmt.Println(str, " ajouté ", nb, " lastID : ", lastID)
 
-	http.HandleFunc("/", printPage)
+	http.HandleFunc("/", mdb.printPage)
 	http.ListenAndServe(":8081", nil)
 
 }
 
-func printPage(w http.ResponseWriter, r *http.Request) {
-	var dataSource string
+func (mdb myBDD) printPage(w http.ResponseWriter, r *http.Request) {
+	var err error
+	fmt.Println(mdb)
 
-	dataSource = "arnaud:nono@tcp(db:3306)/"
-
-	db, err := sql.Open("mysql", dataSource)
-	if err != nil {
-		fmt.Println("Erreur lors de l'ouverture de la BDD (2)")
-		log.Fatal(err)
-	}
-	fmt.Println("BDD ouverte (2) " + dataSource)
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		fmt.Println("Erreur lors du ping (2)")
-		//panic(err.Error()) // proper error handling instead of panic in your app
-	}
-
-	fmt.Println("BDD ouverte (2) " + dataSource)
-
-	stmt, err := db.Prepare("SELECT * FROM bd1.example")
+	stmt, err := mdb.db.Prepare("SELECT * FROM bd1.example")
 	if err != nil {
 		log.Fatal(err)
 	}
