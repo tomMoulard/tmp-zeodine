@@ -1,0 +1,37 @@
+version: '2'
+services:
+  reverse-proxy:
+    image: traefik #The official Traefik docker image
+    command: --api --docker #Enables the web UI and tells Træfik to listen to docker
+    ports:
+      - "80:80"     #The HgoTTP port
+      - "8080:8080" #The Web UI (enabled by --api)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock #So that Traefik can listen to the Docker events
+  db:
+    image: mysql:5.7 #mysql5.7
+    environment:
+        - MYSQL_ROOT_PASSWORD=123
+        - MYSQL_USER=arnaud
+        - MYSQL_PASSWORD=nono
+        - MYSQL_DATABASE=bd1
+    labels:
+      - "traefik.frontend.rule=Host:mysql.docker.localhost"
+      # networks:
+    #   - myNet
+  web:
+    build:
+      context: .
+      dockerfile: ./dockerfile
+   
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+    links:
+      - db
+    # networks:
+    #   - myNet
+  # networks:
+  #   myNet:
+  #     driver: "bridge"

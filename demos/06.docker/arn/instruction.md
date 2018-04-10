@@ -15,7 +15,9 @@ Si on ajoute la ligne <code>banner yoyo</code>, on auras l'affichage de <code>ba
 
 Pour lancer le bash avec ubuntu 16.04 :
 
-* docker run --rm dockubuntu bash
+* docker run -it --rm dockubuntu bash
+
+<code>-it</code> permet de dire de lancer le bash dans le ubuntu du docker
 
 ------------------------------------
 ## Go
@@ -38,9 +40,12 @@ Important, toujours avoir un fichier en .go dans le même répertoire avant de b
 
 Permet de modifier une variable d'environement et évite de le définir manuelement lors de l'execution du docker avec <code>docker run --name sql dkmysql</code>
 
-On se connecte au serveur mySQL avec :
-* <code>docker run -it --link sql:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'</code>
+On se connecte à la base de donnée avec :
+```bash 
+ docker run -it --link sql:mysql --rm mysql sh -c 'exec mysql -h"$MYSQL_PORT_3306_TCP_ADDR" -P"$MYSQL_PORT_3306_TCP_PORT" -uroot -p"$MYSQL_ENV_MYSQL_ROOT_PASSWORD"'</code>
+```
 
-<code>docker build -t sql_go .</code>
-
-<code>docker run --rm sql_go</code>
+```bash
+docker build -t sql_go .
+docker run --rm sql_go
+```
