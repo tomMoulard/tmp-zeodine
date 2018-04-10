@@ -37,7 +37,7 @@ I'm mapping the port 80 on my computer with the port 9000 of the container
 # MySQL Docker
 
 ```bash
-docker run --name mysql-perso -e MYSQL_ROOT_PASSWORD=zeodine --publish 3306:3360 -d mysql
+docker run --name mysql-perso -e MYSQL_ROOT_PASSWORD=zeodine --publish 3306:3306 -d mysql
 ```
 
 To access the server:
@@ -64,4 +64,10 @@ then, run the api:
 ```bash
 go run db-api.go
 
+```
+
+## Docker-compose
+
+```bash
+docker-compose up -d
 ```
