@@ -1,13 +1,17 @@
-version: '2'
+version: '2.1'
 services:
-  reverse-proxy:
-    image: traefik #The official Traefik docker image
-    command: --api --docker #Enables the web UI and tells Træfik to listen to docker
-    ports:
-      - "80:80"     #The HgoTTP port
-      - "8080:8080" #The Web UI (enabled by --api)
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock #So that Traefik can listen to the Docker events
+  # reverse-proxy:
+  #   image: traefik #The official Traefik docker image
+  #   command: --api --docker #Enables the web UI and tells Træfik to listen to docker
+  #   ports:
+  #     - "80:80"     #The HgoTTP port
+  #     - "8080:8080" #The Web UI (enabled by --api)
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock #So that Traefik can listen to the Docker events
+  #   networks:
+  #     - webapp
+  #   container_name: traefic-test
+  
   db:
     image: mysql:5.7 #mysql5.7
     environment:
@@ -17,12 +21,18 @@ services:
         - MYSQL_DATABASE=bd1
     labels:
       - "traefik.frontend.rule=Host:mysql.docker.localhost"
-      # networks:
-    #   - myNet
+    networks:
+      - webapp
+    container_name: db-test
+
   web:
     build:
       context: .
-      dockerfile: ./dockerfile
+      dockerfile: "./dockerfile"
+    restart: always
+    networks:
+      - webapp
+      - default
    
     ports:
       - "8081:8081"
@@ -30,8 +40,18 @@ services:
       - db
     links:
       - db
-    # networks:
-    #   - myNet
-  # networks:
-  #   myNet:
-  #     driver: "bridge"
+    labels:
+      - "traefik.backend=test"
+      - "traefik.docker.network=webapp"
+      - "traefik.frontend.rule=Host:web.test.fr"
+      - "traefik.enable=true"
+      - "traefik.port=8081"
+      - "traefik.default.protocol=http"
+      - "traefik.admin.frontend.rule=Host:admin-web.test.fr"
+      - "traefik.admin.protocol=https"
+      - "traefik.admin.port=9441"
+    container_name: web-test
+
+networks:
+  webapp:
+    external: true
