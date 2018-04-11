@@ -1,0 +1,219 @@
+Attaching to tom_reverse-proxy_1
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:20:59Z" level=info msg="Using TOML configuration file //traefik.toml" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:20:59Z" level=info msg="Traefik version v1.5.4 built on 2018-03-15_01:35:21PM" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:20:59Z" level=info msg="
+[36mreverse-proxy_1  |[0m Stats collection is disabled.
+[36mreverse-proxy_1  |[0m Help us improve Traefik by turning this feature on :)
+[36mreverse-proxy_1  |[0m More details on: https://docs.traefik.io/basics/#collected-data
+[36mreverse-proxy_1  |[0m " 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:20:59Z" level=debug msg="Global configuration loaded {"LifeCycle":{"RequestAcceptGraceTimeout":0,"GraceTimeOut":10000000000},"GraceTimeOut":0,"Debug":false,"CheckNewVersion":true,"SendAnonymousUsage":false,"AccessLogsFile":"","AccessLog":null,"TraefikLogsFile":"","TraefikLog":null,"LogLevel":"DEBUG","EntryPoints":{"http":{"Network":"","Address":":80","TLS":null,"Redirect":{"entryPoint":"https"},"Auth":null,"WhitelistSourceRange":null,"Compress":false,"ProxyProtocol":null,"ForwardedHeaders":{"Insecure":true,"TrustedIPs":null}},"https":{"Network":"","Address":":443","TLS":{"MinVersion":"","CipherSuites":null,"Certificates":null,"ClientCAFiles":null,"ClientCA":{"Files":null,"Optional":false}},"Redirect":null,"Auth":null,"WhitelistSourceRange":null,"Compress":false,"ProxyProtocol":null,"ForwardedHeaders":{"Insecure":true,"TrustedIPs":null}},"traefik":{"Network":"","Address":":8080","TLS":null,"Redirect":null,"Auth":null,"WhitelistSourceRange":null,"Compress":false,"ProxyProtocol":null,"ForwardedHeaders":{"Insecure":true,"TrustedIPs":null}}},"Cluster":null,"Constraints":[],"ACME":{"Email":"contact@zeodine.fr","Domains":null,"Storage":"/acme.json","StorageFile":"","OnDemand":false,"OnHostRule":true,"CAServer":"https://acme-staging.api.letsencrypt.org/directory","EntryPoint":"https","DNSChallenge":null,"HTTPChallenge":{"EntryPoint":"http"},"DNSProvider":"","DelayDontCheckDNS":0,"ACMELogging":false,"TLSConfig":null},"DefaultEntryPoints":["https","http"],"ProvidersThrottleDuration":2000000000,"MaxIdleConnsPerHost":200,"IdleTimeout":0,"InsecureSkipVerify":false,"RootCAs":null,"Retry":null,"HealthCheck":{"Interval":30000000000},"RespondingTimeouts":null,"ForwardingTimeouts":null,"Web":null,"Docker":{"Watch":true,"Filename":"","Constraints":null,"Trace":false,"DebugLogGeneratedTemplate":false,"Endpoint":"unix:///var/run/docker.sock","Domain":"","TLS":null,"ExposedByDefault":true,"UseBindPortIP":false,"SwarmMode":false},"File":null,"Marathon":null,"Consul":null,"ConsulCatalog":null,"Etcd":null,"Zookeeper":null,"Boltdb":null,"Kubernetes":null,"Mesos":null,"Eureka":null,"ECS":null,"Rancher":null,"DynamoDB":null,"ServiceFabric":null,"Rest":null,"API":{"EntryPoint":"traefik","Dashboard":true,"Debug":false,"CurrentConfigurations":null,"Statistics":null},"Metrics":null,"Ping":null}" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:20:59Z" level=info msg="Preparing server https &{Network: Address::443 TLS:0xc420664100 Redirect:<nil> Auth:<nil> WhitelistSourceRange:[] Compress:false ProxyProtocol:<nil> ForwardedHeaders:0xc4205ede20} with readTimeout=0s writeTimeout=0s idleTimeout=3m0s" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:00Z" level=info msg="Loading ACME Account..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:00Z" level=info msg="Loaded ACME config from store /acme.json" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:00Z" level=debug msg="Building ACME client..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:04Z" level=debug msg=AgreeToTOS... 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=info msg="Retrieving ACME certificates..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=info msg="Starting server on :443" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=info msg="Retrieved ACME certificates" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=info msg="Preparing server traefik &{Network: Address::8080 TLS:<nil> Redirect:<nil> Auth:<nil> WhitelistSourceRange:[] Compress:false ProxyProtocol:<nil> ForwardedHeaders:0xc4205ede60} with readTimeout=0s writeTimeout=0s idleTimeout=3m0s" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=info msg="Testing certificate renew..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=info msg="Preparing server http &{Network: Address::80 TLS:<nil> Redirect:0xc42019df80 Auth:<nil> WhitelistSourceRange:[] Compress:false ProxyProtocol:<nil> ForwardedHeaders:0xc4205ede00} with readTimeout=0s writeTimeout=0s idleTimeout=3m0s" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=info msg="Starting server on :8080" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=info msg="Starting server on :80" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=info msg="Starting provider *docker.Provider {"Watch":true,"Filename":"","Constraints":null,"Trace":false,"DebugLogGeneratedTemplate":false,"Endpoint":"unix:///var/run/docker.sock","Domain":"","TLS":null,"ExposedByDefault":true,"UseBindPortIP":false,"SwarmMode":false}" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Provider connection established with docker 17.03.2-ce (API 1.27)" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=warning msg="Could not find network named 'web' for container '/tom_web_1'! Maybe you're missing the project's prefix in the label? Defaulting to first available network." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=warning msg="Could not find network named 'web' for container '/tom_web_1'! Maybe you're missing the project's prefix in the label? Defaulting to first available network." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Could not load traefik.frontend.whitelistSourceRange labels" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Could not load traefik.frontend.entryPoints labels" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Could not load traefik.frontend.auth.basic labels" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Could not load traefik.frontend.whitelistSourceRange labels" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Could not load traefik.frontend.entryPoints labels" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Could not load traefik.frontend.auth.basic labels" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Could not load traefik.frontend.whitelistSourceRange labels" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Could not load traefik.frontend.entryPoints labels" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Could not load traefik.frontend.auth.basic labels" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Could not load traefik.frontend.whitelistSourceRange labels" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Could not load traefik.frontend.entryPoints labels" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Could not load traefik.frontend.auth.basic labels" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Validation of load balancer method for backend backend-db-tom failed: invalid load-balancing method ''. Using default method wrr." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Validation of load balancer method for backend backend-reverse-proxy-tom failed: invalid load-balancing method ''. Using default method wrr." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Validation of load balancer method for backend backend-tom-web-1-zeodine-app-admin failed: invalid load-balancing method ''. Using default method wrr." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Validation of load balancer method for backend backend-tom-web-1-zeodine-app-default failed: invalid load-balancing method ''. Using default method wrr." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Configuration received from provider docker: {"backends":{"backend-db-tom":{"servers":{"server-tom_db_1":{"url":"http://172.18.0.3:3306","weight":0}},"loadBalancer":{"method":"wrr"}},"backend-reverse-proxy-tom":{"servers":{"server-tom_reverse-proxy_1":{"url":"http://172.18.0.2:80","weight":0}},"loadBalancer":{"method":"wrr"}},"backend-tom-web-1-zeodine-app-admin":{"servers":{"service-0":{"url":"https://172.18.0.4:80","weight":0}},"loadBalancer":{"method":"wrr"}},"backend-tom-web-1-zeodine-app-default":{"servers":{"service-0":{"url":"https://172.18.0.4:81","weight":0}},"loadBalancer":{"method":"wrr"}}},"frontends":{"frontend-Host-mysql-docker-localhost-test-org-2":{"entryPoints":["https","http"],"backend":"backend-db-tom","routes":{"route-frontend-Host-mysql-docker-localhost-test-org-2":{"rule":"Host:mysql.docker.localhost.test.org"}},"passHostHeader":true,"priority":0,"basicAuth":[]},"frontend-Host-traefik-docker-localhost-test-org-1":{"entryPoints":["https","http"],"backend":"backend-reverse-proxy-tom","routes":{"route-frontend-Host-traefik-docker-localhost-test-org-1":{"rule":"Host:traefik.docker.localhost.test.org"}},"passHostHeader":true,"priority":0,"basicAuth":[]},"frontend-tom-web-1-zeodine-app-admin":{"entryPoints":["https","http"],"backend":"backend-tom-web-1-zeodine-app-admin","routes":{"service-admin":{"rule":"Host:admin-web.docker.localhost.test.org"}},"passHostHeader":true,"priority":0,"basicAuth":[]},"frontend-tom-web-1-zeodine-app-default":{"entryPoints":["https","http"],"backend":"backend-tom-web-1-zeodine-app-default","routes":{"service-default":{"rule":"Host:web.docker.localhost.test.org"}},"passHostHeader":true,"priority":0,"basicAuth":[]}}}" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating frontend frontend-Host-mysql-docker-localhost-test-org-2" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Wiring frontend frontend-Host-mysql-docker-localhost-test-org-2 to entryPoint https" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating route route-frontend-Host-mysql-docker-localhost-test-org-2 Host:mysql.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating backend backend-db-tom" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating load-balancer wrr" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating server server-tom_db_1 at http://172.18.0.3:3306 with weight 0" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Wiring frontend frontend-Host-mysql-docker-localhost-test-org-2 to entryPoint http" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating route route-frontend-Host-mysql-docker-localhost-test-org-2 Host:mysql.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating entryPoint redirect http -> https : ^(?:https?:\/\/)?([\w\._-]+)(?::\d+)?(.*)$ -> https://${1}:443${2}" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating backend backend-db-tom" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating load-balancer wrr" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating server server-tom_db_1 at http://172.18.0.3:3306 with weight 0" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating frontend frontend-Host-traefik-docker-localhost-test-org-1" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Wiring frontend frontend-Host-traefik-docker-localhost-test-org-1 to entryPoint https" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating route route-frontend-Host-traefik-docker-localhost-test-org-1 Host:traefik.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating backend backend-reverse-proxy-tom" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating load-balancer wrr" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating server server-tom_reverse-proxy_1 at http://172.18.0.2:80 with weight 0" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Wiring frontend frontend-Host-traefik-docker-localhost-test-org-1 to entryPoint http" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating route route-frontend-Host-traefik-docker-localhost-test-org-1 Host:traefik.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating backend backend-reverse-proxy-tom" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating load-balancer wrr" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating server server-tom_reverse-proxy_1 at http://172.18.0.2:80 with weight 0" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating frontend frontend-tom-web-1-zeodine-app-admin" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Wiring frontend frontend-tom-web-1-zeodine-app-admin to entryPoint https" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating route service-admin Host:admin-web.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating backend backend-tom-web-1-zeodine-app-admin" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating load-balancer wrr" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating server service-0 at https://172.18.0.4:80 with weight 0" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Wiring frontend frontend-tom-web-1-zeodine-app-admin to entryPoint http" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating route service-admin Host:admin-web.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating backend backend-tom-web-1-zeodine-app-admin" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating load-balancer wrr" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating server service-0 at https://172.18.0.4:80 with weight 0" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating frontend frontend-tom-web-1-zeodine-app-default" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Wiring frontend frontend-tom-web-1-zeodine-app-default to entryPoint https" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating route service-default Host:web.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating backend backend-tom-web-1-zeodine-app-default" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating load-balancer wrr" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating server service-0 at https://172.18.0.4:81 with weight 0" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Wiring frontend frontend-tom-web-1-zeodine-app-default to entryPoint http" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating route service-default Host:web.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating backend backend-tom-web-1-zeodine-app-default" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating load-balancer wrr" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Creating server service-0 at https://172.18.0.4:81 with weight 0" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=info msg="Server configuration reloaded on :443" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=info msg="Server configuration reloaded on :8080" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=info msg="Server configuration reloaded on :80" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="LoadCertificateForDomains [web.docker.localhost.test.org]..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Looking for provided certificate to validate [web.docker.localhost.test.org]..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Domains ["web.docker.localhost.test.org"] need ACME certificates generation for domains "web.docker.localhost.test.org"." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:05Z" level=debug msg="Loading ACME certificates [web.docker.localhost.test.org]..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:11Z" level=debug msg="Challenge Present web.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:13Z" level=debug msg="Challenge CleanUp web.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:13Z" level=error msg="map[web.docker.localhost.test.org:acme: Error 403 - urn:acme:error:unauthorized - Invalid response from http://web.docker.localhost.test.org/.well-known/acme-challenge/kK-P8NvWXuKfy_O7_LWEXEHXcKDYRjOgzgBWHCrnCPY: "<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+[36mreverse-proxy_1  |[0m <html><head>
+[36mreverse-proxy_1  |[0m <title>404 Not Found</title>
+[36mreverse-proxy_1  |[0m </head><body>
+[36mreverse-proxy_1  |[0m <h1>Not Found</h1>
+[36mreverse-proxy_1  |[0m <p"
+[36mreverse-proxy_1  |[0m Error Detail:
+[36mreverse-proxy_1  |[0m 	Validation for web.docker.localhost.test.org:80
+[36mreverse-proxy_1  |[0m 	Resolved to:
+[36mreverse-proxy_1  |[0m 		217.145.99.169
+[36mreverse-proxy_1  |[0m 	Used: 217.145.99.169
+[36mreverse-proxy_1  |[0m 
+[36mreverse-proxy_1  |[0m ]" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:13Z" level=error msg="Error getting ACME certificates [web.docker.localhost.test.org] : cannot obtain certificates map[web.docker.localhost.test.org:acme: Error 403 - urn:acme:error:unauthorized - Invalid response from http://web.docker.localhost.test.org/.well-known/acme-challenge/kK-P8NvWXuKfy_O7_LWEXEHXcKDYRjOgzgBWHCrnCPY: "<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+[36mreverse-proxy_1  |[0m <html><head>
+[36mreverse-proxy_1  |[0m <title>404 Not Found</title>
+[36mreverse-proxy_1  |[0m </head><body>
+[36mreverse-proxy_1  |[0m <h1>Not Found</h1>
+[36mreverse-proxy_1  |[0m <p"
+[36mreverse-proxy_1  |[0m Error Detail:
+[36mreverse-proxy_1  |[0m 	Validation for web.docker.localhost.test.org:80
+[36mreverse-proxy_1  |[0m 	Resolved to:
+[36mreverse-proxy_1  |[0m 		217.145.99.169
+[36mreverse-proxy_1  |[0m 	Used: 217.145.99.169
+[36mreverse-proxy_1  |[0m 
+[36mreverse-proxy_1  |[0m ]" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:13Z" level=debug msg="LoadCertificateForDomains [mysql.docker.localhost.test.org]..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:13Z" level=debug msg="Looking for provided certificate to validate [mysql.docker.localhost.test.org]..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:13Z" level=debug msg="Domains ["mysql.docker.localhost.test.org"] need ACME certificates generation for domains "mysql.docker.localhost.test.org"." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:13Z" level=debug msg="Loading ACME certificates [mysql.docker.localhost.test.org]..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:18Z" level=debug msg="Challenge Present mysql.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:20Z" level=debug msg="Challenge CleanUp mysql.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:20Z" level=error msg="map[mysql.docker.localhost.test.org:acme: Error 403 - urn:acme:error:unauthorized - Invalid response from http://mysql.docker.localhost.test.org/.well-known/acme-challenge/lF7anx-FYtKvCep8HCdw7Qf_nlq5qP9fmYLCSn8rzMs: "<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+[36mreverse-proxy_1  |[0m <html><head>
+[36mreverse-proxy_1  |[0m <title>404 Not Found</title>
+[36mreverse-proxy_1  |[0m </head><body>
+[36mreverse-proxy_1  |[0m <h1>Not Found</h1>
+[36mreverse-proxy_1  |[0m <p"
+[36mreverse-proxy_1  |[0m Error Detail:
+[36mreverse-proxy_1  |[0m 	Validation for mysql.docker.localhost.test.org:80
+[36mreverse-proxy_1  |[0m 	Resolved to:
+[36mreverse-proxy_1  |[0m 		217.145.99.169
+[36mreverse-proxy_1  |[0m 	Used: 217.145.99.169
+[36mreverse-proxy_1  |[0m 
+[36mreverse-proxy_1  |[0m ]" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:20Z" level=error msg="Error getting ACME certificates [mysql.docker.localhost.test.org] : cannot obtain certificates map[mysql.docker.localhost.test.org:acme: Error 403 - urn:acme:error:unauthorized - Invalid response from http://mysql.docker.localhost.test.org/.well-known/acme-challenge/lF7anx-FYtKvCep8HCdw7Qf_nlq5qP9fmYLCSn8rzMs: "<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+[36mreverse-proxy_1  |[0m <html><head>
+[36mreverse-proxy_1  |[0m <title>404 Not Found</title>
+[36mreverse-proxy_1  |[0m </head><body>
+[36mreverse-proxy_1  |[0m <h1>Not Found</h1>
+[36mreverse-proxy_1  |[0m <p"
+[36mreverse-proxy_1  |[0m Error Detail:
+[36mreverse-proxy_1  |[0m 	Validation for mysql.docker.localhost.test.org:80
+[36mreverse-proxy_1  |[0m 	Resolved to:
+[36mreverse-proxy_1  |[0m 		217.145.99.169
+[36mreverse-proxy_1  |[0m 	Used: 217.145.99.169
+[36mreverse-proxy_1  |[0m 
+[36mreverse-proxy_1  |[0m ]" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:20Z" level=debug msg="LoadCertificateForDomains [traefik.docker.localhost.test.org]..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:20Z" level=debug msg="Looking for provided certificate to validate [traefik.docker.localhost.test.org]..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:20Z" level=debug msg="Domains ["traefik.docker.localhost.test.org"] need ACME certificates generation for domains "traefik.docker.localhost.test.org"." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:20Z" level=debug msg="Loading ACME certificates [traefik.docker.localhost.test.org]..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:26Z" level=debug msg="Challenge Present traefik.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:28Z" level=debug msg="Challenge CleanUp traefik.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:28Z" level=error msg="map[traefik.docker.localhost.test.org:acme: Error 403 - urn:acme:error:unauthorized - Invalid response from http://traefik.docker.localhost.test.org/.well-known/acme-challenge/lQuKmype0_Fh1Txml0MuZvZs-1iv4LlNGzwHDk1HVQE: "<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+[36mreverse-proxy_1  |[0m <html><head>
+[36mreverse-proxy_1  |[0m <title>404 Not Found</title>
+[36mreverse-proxy_1  |[0m </head><body>
+[36mreverse-proxy_1  |[0m <h1>Not Found</h1>
+[36mreverse-proxy_1  |[0m <p"
+[36mreverse-proxy_1  |[0m Error Detail:
+[36mreverse-proxy_1  |[0m 	Validation for traefik.docker.localhost.test.org:80
+[36mreverse-proxy_1  |[0m 	Resolved to:
+[36mreverse-proxy_1  |[0m 		217.145.99.169
+[36mreverse-proxy_1  |[0m 	Used: 217.145.99.169
+[36mreverse-proxy_1  |[0m 
+[36mreverse-proxy_1  |[0m ]" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:28Z" level=error msg="Error getting ACME certificates [traefik.docker.localhost.test.org] : cannot obtain certificates map[traefik.docker.localhost.test.org:acme: Error 403 - urn:acme:error:unauthorized - Invalid response from http://traefik.docker.localhost.test.org/.well-known/acme-challenge/lQuKmype0_Fh1Txml0MuZvZs-1iv4LlNGzwHDk1HVQE: "<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+[36mreverse-proxy_1  |[0m <html><head>
+[36mreverse-proxy_1  |[0m <title>404 Not Found</title>
+[36mreverse-proxy_1  |[0m </head><body>
+[36mreverse-proxy_1  |[0m <h1>Not Found</h1>
+[36mreverse-proxy_1  |[0m <p"
+[36mreverse-proxy_1  |[0m Error Detail:
+[36mreverse-proxy_1  |[0m 	Validation for traefik.docker.localhost.test.org:80
+[36mreverse-proxy_1  |[0m 	Resolved to:
+[36mreverse-proxy_1  |[0m 		217.145.99.169
+[36mreverse-proxy_1  |[0m 	Used: 217.145.99.169
+[36mreverse-proxy_1  |[0m 
+[36mreverse-proxy_1  |[0m ]" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:28Z" level=debug msg="LoadCertificateForDomains [admin-web.docker.localhost.test.org]..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:28Z" level=debug msg="Looking for provided certificate to validate [admin-web.docker.localhost.test.org]..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:28Z" level=debug msg="Domains ["admin-web.docker.localhost.test.org"] need ACME certificates generation for domains "admin-web.docker.localhost.test.org"." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:28Z" level=debug msg="Loading ACME certificates [admin-web.docker.localhost.test.org]..." 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:34Z" level=debug msg="Challenge Present admin-web.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:36Z" level=debug msg="Challenge CleanUp admin-web.docker.localhost.test.org" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:36Z" level=error msg="map[admin-web.docker.localhost.test.org:acme: Error 403 - urn:acme:error:unauthorized - Invalid response from http://admin-web.docker.localhost.test.org/.well-known/acme-challenge/riUip5kq6C27SjUBWOMN4K9M4ipixTdbQ_b1-JV6ffQ: "<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+[36mreverse-proxy_1  |[0m <html><head>
+[36mreverse-proxy_1  |[0m <title>404 Not Found</title>
+[36mreverse-proxy_1  |[0m </head><body>
+[36mreverse-proxy_1  |[0m <h1>Not Found</h1>
+[36mreverse-proxy_1  |[0m <p"
+[36mreverse-proxy_1  |[0m Error Detail:
+[36mreverse-proxy_1  |[0m 	Validation for admin-web.docker.localhost.test.org:80
+[36mreverse-proxy_1  |[0m 	Resolved to:
+[36mreverse-proxy_1  |[0m 		217.145.99.169
+[36mreverse-proxy_1  |[0m 	Used: 217.145.99.169
+[36mreverse-proxy_1  |[0m 
+[36mreverse-proxy_1  |[0m ]" 
+[36mreverse-proxy_1  |[0m time="2018-04-11T12:21:36Z" level=error msg="Error getting ACME certificates [admin-web.docker.localhost.test.org] : cannot obtain certificates map[admin-web.docker.localhost.test.org:acme: Error 403 - urn:acme:error:unauthorized - Invalid response from http://admin-web.docker.localhost.test.org/.well-known/acme-challenge/riUip5kq6C27SjUBWOMN4K9M4ipixTdbQ_b1-JV6ffQ: "<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+[36mreverse-proxy_1  |[0m <html><head>
+[36mreverse-proxy_1  |[0m <title>404 Not Found</title>
+[36mreverse-proxy_1  |[0m </head><body>
+[36mreverse-proxy_1  |[0m <h1>Not Found</h1>
+[36mreverse-proxy_1  |[0m <p"
+[36mreverse-proxy_1  |[0m Error Detail:
+[36mreverse-proxy_1  |[0m 	Validation for admin-web.docker.localhost.test.org:80
+[36mreverse-proxy_1  |[0m 	Resolved to:
+[36mreverse-proxy_1  |[0m 		217.145.99.169
+[36mreverse-proxy_1  |[0m 	Used: 217.145.99.169
+[36mreverse-proxy_1  |[0m 
+[36mreverse-proxy_1  |[0m ]" 

@@ -1,3 +1,4 @@
+logLevel = "DEBUG"
 defaultEntryPoints = ["https","http"]
 [entryPoints]
   [entryPoints.http]
@@ -10,12 +11,13 @@ defaultEntryPoints = ["https","http"]
 
 [docker]
  endpoint = "unix:///var/run/docker.sock"
- domain = "localhost"
+ domain = "test.org"
  watch = true
  exposedbydefault = false
 
 [acme]
  email = "contact@zeodine.fr"
+ domain = "test.org"
  storage = "/acme.json"
  entryPoint = "https"
  OnHostRule = true

@@ -11,7 +11,7 @@ services:
       - ./traefik.toml:/traefik.toml
       - ./acme.json:/acme.json
     labels:
-      - "traefik.frontend.rule=Host:traefik.docker.localhost"
+      - "traefik.frontend.rule=Host:traefik.docker.localhost.test.org"
   db:
     image: mysql:5.7 #mysql5.7
     environment:
@@ -20,7 +20,7 @@ services:
         - MYSQL_USER=tom 
         - MYSQL_PASSWORD=multipass 
     labels:
-      - "traefik.frontend.rule=Host:mysql.docker.localhost"
+      - "traefik.frontend.rule=Host:mysql.docker.localhost.test.org"
   web:
     build:
       context: .
@@ -35,11 +35,11 @@ services:
     labels:
       - "traefik.backend=zeodine-app"
       - "traefik.docker.network=web"
-      - "traefik.frontend.rule=Host:web.docker.localhost"
+      - "traefik.frontend.rule=Host:web.docker.localhost.test.org"
       - "traefik.enable=true"
       - "traefik.port=81"
       - "traefik.default.protocol=https"
-      - "traefik.admin.frontend.rule=Host:admin-web.docker.localhost"
+      - "traefik.admin.frontend.rule=Host:admin-web.docker.localhost.test.org"
       - "traefik.admin.protocol=https"
       - "traefik.admin.port=80"
   #   networks:
