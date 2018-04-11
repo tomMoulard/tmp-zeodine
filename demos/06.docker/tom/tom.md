@@ -71,3 +71,17 @@ go run db-api.go
 ```bash
 docker-compose up -d
 ```
+
+## Traefik SSl
+
+```bash
+docker-compose up -d # to run the service
+```
+
+After, open a web nav with the page : http://web.docker.localhost/
+It works.
+
+The open : https://web.docker.localhost/
+It doesn't work
+
+(and same with admin-web.docker.localhost )

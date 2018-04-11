@@ -42,9 +42,9 @@ services:
       - "traefik.admin.frontend.rule=Host:admin-web.docker.localhost"
       - "traefik.admin.protocol=https"
       - "traefik.admin.port=80"
-    networks:
-      - web
-      ' default'
-  network:
-    web:
-      external: true
+  #   networks:
+  #     - web
+  #     - default
+  # network:
+  #   web:
+  #     external: true
