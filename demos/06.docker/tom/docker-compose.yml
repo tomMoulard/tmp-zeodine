@@ -4,10 +4,14 @@ services:
     image: traefik #The official Traefik docker image
     command: --api --docker #Enables the web UI and tells Træfik to listen to docker
     ports:
-      - "80:80"     #The HTTP port
+      # - "80:80"     #The HTTP port
       - "8080:8080" #The Web UI (enabled by --api)
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock #So that Traefik can listen to the Docker events
+      # - ./traefik.toml:/traefik.toml
+      # - ./acme.json:/acme.json
+    labels:
+      - "traefik.frontend.rule=Host:traefik.docker.localhost"
   db:
     image: mysql:5.7 #mysql5.7
     environment:
@@ -17,21 +21,30 @@ services:
         - MYSQL_PASSWORD=multipass 
     labels:
       - "traefik.frontend.rule=Host:mysql.docker.localhost"
-      # networks:
-    #   - myNet
   web:
     build:
       context: .
       dockerfile: ./Dockerfile
-   
     ports:
-      - "8081:8081"
+      - "80:8081"
     depends_on:
       - db
+    restart: always
     links:
       - db
-    # networks:
-    #   - myNet
-  # networks:
-  #   myNet:
-  #     driver: "bridge"
+    labels:
+      - "traefik.backend=zeodine-app"
+      - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:web.docker.localhost"
+      - "traefik.enable=true"
+      - "traefik.port=81"
+      - "traefik.default.protocol=https"
+      - "traefik.admin.frontend.rule=Host:admin-web.docker.localhost"
+      - "traefik.admin.protocol=https"
+      - "traefik.admin.port=80"
+    networks:
+      - web
+      ' default'
+  network:
+    web:
+      external: true
