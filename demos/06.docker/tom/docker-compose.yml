@@ -29,7 +29,7 @@ services:
       - "80:8081"
     depends_on:
       - db
-    restart: always
+    # restart: always
     links:
       - db
     labels:
