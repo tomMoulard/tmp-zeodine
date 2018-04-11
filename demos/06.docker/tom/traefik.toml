@@ -1,8 +1,4 @@
-debug = false
-
-logLevel = "ERROR"
 defaultEntryPoints = ["https","http"]
-
 [entryPoints]
   [entryPoints.http]
   address = ":80"
@@ -12,19 +8,19 @@ defaultEntryPoints = ["https","http"]
   address = ":443"
   [entryPoints.https.tls]
 
-[retry]
-
 [docker]
-endpoint = "unix:///var/run/docker.sock"
-domain = "localhost"
-watch = true
-exposedbydefault = false
+ endpoint = "unix:///var/run/docker.sock"
+ domain = "localhost"
+ watch = true
+ exposedbydefault = false
 
 [acme]
-email = "contact@zeodine.fr"
-storage = "acme.json"
-entryPoint = "https"
-OnHostRule = true
+ email = "contact@zeodine.fr"
+ storage = "/acme.json"
+ entryPoint = "https"
+ OnHostRule = true
+ caServer = "https://acme-staging.api.letsencrypt.org/directory"
+
 
 [acme.httpChallenge]
-entryPoint = "http"
+ entryPoint = "http"
