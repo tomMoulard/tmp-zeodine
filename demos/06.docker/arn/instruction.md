@@ -72,3 +72,22 @@ docker-compose build; docker-compose up -d
 ```
 
 Ensuite aller sur https://test.fr
+
+### V2
+
+Instruction :
+
+A faire juste une fois :
+
+```bash 
+git pull
+docker network create webapp
+```
+Ensuite :
+```bash 
+cd ~/tmp-zeodine/demos/06.docker/arn/sql_go
+echo "">acme.json
+docker-compose build; docker-compose up -d
+```
+
+Ensuite aller sur https://test.fr
