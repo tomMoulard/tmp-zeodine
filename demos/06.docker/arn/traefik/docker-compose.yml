@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  traefik:
+    image: traefik:1.5.4
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - webapp
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/gould/Documents/traefik/traefik.toml:/traefik.toml
+      - /home/gould/Documents/traefik/acme.json:/acme.json
+    container_name: traefik
+    # labels:
+    #   - "traefik.frontend.rule=Host:monitor.example.com"
+    #   - "traefik.port=8080"
+
+networks:
+  webapp:
+    external: true
