@@ -1,4 +1,4 @@
-version: '2.1'
+version: '2'
 services:
   # reverse-proxy:
   #   image: traefik #The official Traefik docker image
@@ -6,11 +6,15 @@ services:
   #   ports:
   #     - "80:80"     #The HgoTTP port
   #     - "8080:8080" #The Web UI (enabled by --api)
+  #     - "443:443"
   #   volumes:
   #     - /var/run/docker.sock:/var/run/docker.sock #So that Traefik can listen to the Docker events
-  #   networks:
-  #     - webapp
+  #     - ~/tmp-zeodine/demos/06.docker/arn/traefik:/traefik.toml
+  #     - ~/tmp-zeodine/demos/06.docker/arn/traefik:/acme.json
   #   container_name: traefic-test
+  #   labels:
+  #     - "traefik.frontend.rule=Host:monitor.example.com"
+  #     - "traefik.port=8080"
   
   db:
     image: mysql:5.7 #mysql5.7
@@ -23,6 +27,7 @@ services:
       - "traefik.frontend.rule=Host:mysql.docker.localhost"
     networks:
       - webapp
+      - default
     container_name: db-test
 
   web:
@@ -36,6 +41,7 @@ services:
    
     ports:
       - "8081:8081"
+      - "9000:9000"
     depends_on:
       - db
     links:
@@ -43,13 +49,13 @@ services:
     labels:
       - "traefik.backend=test"
       - "traefik.docker.network=webapp"
-      - "traefik.frontend.rule=Host:web.test.fr"
+      - "traefik.frontend.rule=Host:test.fr"
       - "traefik.enable=true"
       - "traefik.port=8081"
       - "traefik.default.protocol=http"
-      - "traefik.admin.frontend.rule=Host:admin-web.test.fr"
+      - "traefik.admin.frontend.rule=Host:admin-test.fr"
       - "traefik.admin.protocol=https"
-      - "traefik.admin.port=9441"
+      - "traefik.admin.port=8081"
     container_name: web-test
 
 networks:

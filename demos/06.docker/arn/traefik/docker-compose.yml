@@ -7,16 +7,17 @@ services:
     ports:
       - 80:80
       - 443:443
+
     networks:
       - webapp
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /home/gould/Documents/traefik/traefik.toml:/traefik.toml
-      - /home/gould/Documents/traefik/acme.json:/acme.json
+      - ./traefik.toml
+      - ./acme.json
     container_name: traefik
-    # labels:
-    #   - "traefik.frontend.rule=Host:monitor.example.com"
-    #   - "traefik.port=8080"
+    labels:
+      - "traefik.frontend.rule=Host:monitor.example.com"
+      - "traefik.port=8080"
 
 networks:
   webapp:
