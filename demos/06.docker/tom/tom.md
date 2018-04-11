@@ -78,6 +78,8 @@ docker-compose up -d
 docker-compose up -d # to run the service
 ```
 
+### Only with google-chrome
+
 After, open a web nav with the page : http://web.docker.localhost/
 It works.
 
