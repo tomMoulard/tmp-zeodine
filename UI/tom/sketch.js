@@ -1,4 +1,5 @@
 var cards;
+
 function setup() {
     h      = windowHeight;
     w      = windowWidth;
@@ -15,8 +16,8 @@ function draw() {
 
 function mousePressed() {
     if (mouseX < w && mouseY < h) {
-        console.log(mouseX, mouseY)
-        var newCard = new Card(mouseX, mouseY)
+        console.log(mouseX, mouseY, "", "")
+        var newCard = new Card(mouseX, mouseY, "maxresdefault.jpg", "Coucou, ceci est un test")
         append(cards, newCard)
     }
 }
