@@ -19,6 +19,7 @@ function setup() {
     nbCards            = floor(w / 100); // max card in a row
     nbCardsMax         = 5; //total cards provided
     // TODO: get this from the api
+    // nbCardsMax = loadJSON("http://147.135.194.248/nbcards/")
     cardPos            = 0; //Bottom first card
     timeToSave         = 0; //timer to save cards
 
@@ -89,16 +90,16 @@ function mouseReleased() {
     mouseIsPressedHere = false;
 }
 
-function keyPressed() {
-    if (keyCode == LEFT_ARROW) {
-        cardPos += 1
-        if (cardPos >= nbCardsMax) { cardPos = 0; }
-    } else if (keyCode == RIGHT_ARROW) {
-        cardPos -= 1
-        if (cardPos < 0) { cardPos = nbCardsMax - 1; }
-    }
-    buildBottomCards();
-}
+// function keyPressed() {
+//     if (keyCode == LEFT_ARROW) {
+//         cardPos += 1
+//         if (cardPos >= nbCardsMax) { cardPos = 0; }
+//     } else if (keyCode == RIGHT_ARROW) {
+//         cardPos -= 1
+//         if (cardPos < 0) { cardPos = nbCardsMax - 1; }
+//     }
+//     buildBottomCards();
+// }
 
 function isCard(x, y, list) {
     console.log("Checking if (" + x + "," + y + ") is inside a card")
