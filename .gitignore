@@ -18,3 +18,9 @@
 
 # test file
 test.go
+
+# Traefik binary
+demos/06.docker/tom/traefik
+
+#Removing pictures
+*.jpg
