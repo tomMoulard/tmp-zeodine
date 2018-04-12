@@ -17,21 +17,25 @@ type jsonManage struct {
 
 func (jsonS jsonManage) printCard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	chaine := "card" + ps.ByName("id")
-	fmt.Println(jsonS.data)
-	fmt.Println(chaine)
 
 	if jsonS.err != nil {
-		mapErr := map[string]string{"erreur": "1", "id": ps.ByName("ch"), "img": "", "text": "", "card": chaine}
+		mapErr := map[string]string{"erreur": "1", "id": ps.ByName("id"), "img": "", "text": "", "card": chaine}
 		res, _ := json.Marshal(mapErr)
 		fmt.Fprintln(w, string(res))
 		return
 	}
 
-	mapCard := jsonS.data[chaine].(map[string]interface{})
+	mapCard0 := jsonS.data[chaine]
+	if mapCard0 == nil {
+		mapErr := map[string]string{"erreur": "-1", "id": ps.ByName("id"), "img": "", "text": "", "card": chaine}
+		res, _ := json.Marshal(mapErr)
+		fmt.Fprintln(w, string(res))
+		return
+	}
 
-	fmt.Println(mapCard)
+	mapCard := mapCard0.(map[string]interface{})
 
-	mapRes := map[string]string{"erreur": "0", "id": ps.ByName("ch"), "img": mapCard["img"].(string), "text": mapCard["text"].(string), "card": chaine}
+	mapRes := map[string]string{"erreur": "0", "id": ps.ByName("id"), "img": mapCard["img"].(string), "text": mapCard["text"].(string), "card": chaine}
 	res, _ := json.Marshal(mapRes)
 	fmt.Fprintln(w, string(res))
 
