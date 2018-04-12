@@ -9,16 +9,46 @@ defaultEntryPoints = ["https","http"]
   address = ":443"
   [entryPoints.https.tls]
 
+[retry]
+
 [docker]
  endpoint         = "unix:///var/run/docker.sock"
- domain           = "test.org"
+ domain           = "zeodine.fr"
  watch            = true
  exposedbydefault = false
 
 [acme]
  email      = "contact@zeodine.fr"
- domain     = "test.org"
- storage    = "/acme.json"
+ storage    = "acme.json"
  entryPoint = "https"
- OnHostRule = true
+ OnHostRule = true 
  caServer   = "https://acme-staging.api.letsencrypt.org/directory"
+
+[[acme.domains]]
+ main = "zeodine.fr"
+
+[acme.httpChallenge]
+ entryPoint = "http"
+
+
+[file]
+
+[backends]
+ [backends.app]
+   [backends.app.servers.server1]
+      url = "http://app:8080"
+ [backends.mailhog]
+   [backends.mailhog.servers.server1]
+      url = "http://mail:8025"
+
+[frontends]
+ [frontends.mailhog]
+     backend = "mailhog"
+     passHostHeader = true
+     [frontends.mailhog.routes.example]
+     rule = "Host:0.0.0.0"
+ [frontends.app]
+     backend = "app"
+     passHostHeader = true
+     [frontends.app.routes.example]
+     rule = "Host:web.docker.zeodine.fr:8081"

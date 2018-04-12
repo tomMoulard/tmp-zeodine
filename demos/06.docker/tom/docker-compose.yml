@@ -4,14 +4,16 @@ services:
     image: traefik #The official Traefik docker image
     command: --api --docker #Enables the web UI and tells Træfik to listen to docker
     ports:
-      # - "80:80"     #The HTTP port
+      - "80:80"     #The HTTP port
       - "8080:8080" #The Web UI (enabled by --api)
+      - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock #So that Traefik can listen to the Docker events
       - ./traefik.toml:/traefik.toml
       - ./acme.json:/acme.json
     labels:
-      - "traefik.frontend.rule=Host:traefik.docker.localhost"
+      - "traefik.frontend.rule=Host:traefik.docker.zeodine.fr"
+      - "traefik.port=8080"
   db:
     image: mysql:5.7 #mysql5.7
     environment:
@@ -20,28 +22,28 @@ services:
         - MYSQL_USER=tom 
         - MYSQL_PASSWORD=multipass 
     labels:
-      - "traefik.frontend.rule=Host:mysql.docker.localhost"
+      - "traefik.frontend.rule=Host:mysql.docker.zeodine.fr"
   web:
     build:
       context: .
       dockerfile: ./Dockerfile
     ports:
-      - "80:8081"
+      - "8081:8081"
     depends_on:
       - db
-    # restart: always
+    restart: always
     links:
       - db
     labels:
       - "traefik.backend=zeodine-app"
-      - "traefik.docker.network=web"
-      - "traefik.frontend.rule=Host:web.docker.localhost"
+      # - "traefik.docker.network=web"
+      - "traefik.frontend.rule=Host:web.docker.zeodine.fr"
       - "traefik.enable=true"
-      - "traefik.port=81"
-      - "traefik.default.protocol=https"
-      - "traefik.admin.frontend.rule=Host:admin-web.docker.localhost"
+      - "traefik.port=8081"
+      - "traefik.default.protocol=http"
+      - "traefik.admin.frontend.rule=Host:admin-web.docker.zeodine.fr"
       - "traefik.admin.protocol=https"
-      - "traefik.admin.port=80"
+      - "traefik.admin.port=8081"
   #   networks:
   #     - web
   #     - default

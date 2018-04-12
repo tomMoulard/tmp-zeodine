@@ -78,12 +78,4 @@ docker-compose up -d
 docker-compose up -d # to run the service
 ```
 
-### Only with google-chrome
-
-After, open a web nav with the page : http://web.docker.localhost/
-It works.
-
-The open : https://web.docker.localhost/
-It doesn't work
-
-(and same with admin-web.docker.localhost )
+you can now open https://localhost/ 
