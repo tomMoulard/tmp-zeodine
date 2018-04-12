@@ -4,54 +4,68 @@ var thisCardsID
 var loadedCards;
 var nbCards;
 var nbCardsMax;
+var cardPos;
+var timeToSave;
 
 function setup() {
-    h = windowHeight - 16;
-    w = windowWidth - 8;
+    h = windowHeight;
+    w = windowWidth;
     createCanvas(w, h);
     cards = [];
     loadedCards = [];
     mouseIsPressedHere = false;
     nbCards = floor(w / 100);
-    nbCardsMax = 5
-    var cardID = 1
-    for (var i = 1; i < nbCards; i++) {
-        if (cardID > nbCardsMax) { cardID = 1; }
+    nbCardsMax = 5;
+    cardPos = 0;
+    timeToSave = 0;
 
-        //tmp
-        var posX = map(i, 0, nbCards, 0, w);
-        var tmpCard = new Card(posX, h - 155, "maxresdefault.jpg", "" + posX + "\n" + cardID);
-        console.log(posX)
-        append(loadedCards, tmpCard);
-        append(cards, tmpCard);
-
-
-        var url = "http://147.135.194.248/cards/" + cardID;
-        var cardJson = loadJSON(url, createCard);
+    for (var i = 0; i < nbCardsMax; i++) {
+        var url = "http://147.135.194.248/cards/" + i;
+        // var cardJson = loadJSON(url, createCard);
         // append(loadedCards, -1);
-
-
-        cardID += 1;
+        var tmpCard = new Card(0, h - 155, "maxresdefault.jpg", "" + i);
+        append(loadedCards, tmpCard);
     }
+    console.log(loadedCards)
 }
 
 function draw() {
     background(51);
+    // Showing all cards
     for (var i = 0; i < cards.length; i++) {
-        cards[i].display();
+        if (cards[i]) {
+            cards[i].display();
+        }
     }
-    for (var i = 0; i < loadedCards.length; i++) {
-        loadedCards[i].display();
+    // showing preloaded cards starting with cardPos
+    var cardPosTmp = cardPos;
+    for (var i = cardPos; i < cardPos + nbCards; i++) {
+        if (cardPosTmp >= nbCardsMax) { cardPosTmp = 0; }
+        var posX = map(i, 0, nbCards, 80, w-20)
+        // var tmpCard = new Card(posX, h - 155, "maxresdefault.jpg", "CardID:" + cardPosTmp)
+        loadedCards[cardPosTmp].x = posX;
+        loadedCards[cardPosTmp].display();
+        cardPosTmp += 1;
     }
     if (mouseIsPressedHere) {
         cards[thisCardsID].x = mouseX;
         cards[thisCardsID].y = mouseY;
     }
+    if (timeToSave > 1000) {
+        console.log("Saving ...");
+        var res = [];
+        for (var i = 0; i < cards.length; i++) {
+            append(res, cards[i].save());
+        }
+        console.log({ res });
+        timeToSave = -1;
+    }
+    timeToSave += 1;
 }
 
 function mousePressed() {
-    if (mouseX < w && mouseY < h) {
-        cardID = isCard(mouseX, mouseY);
+    if (mouseX < w && mouseY < h - 245) {
+        cardID = isCard(mouseX, mouseY, cards);
         if (cardID == -1) {
             var newCard = new Card(mouseX, mouseY, "maxresdefault.jpg", "CardID:" + cards.length);
             append(cards, newCard);
@@ -59,6 +73,11 @@ function mousePressed() {
             mouseIsPressedHere = true;
             thisCardsID = cardID;
         }
+    } else if (mouseX < w && mouseY < h){
+        cardID = isCard(mouseX, mouseY, loadedCards);
+        var tmpCard = new Card(w/2, h/2, loadedCards[cardID].imgURL, loadedCards[cardID].desc)
+        console.log(cardID, tmpCard);
+        append(cards, tmpCard);
     }
 }
 
@@ -66,12 +85,12 @@ function mouseReleased() {
     mouseIsPressedHere = false;
 }
 
-function isCard(x, y) {
-    for (var i = 0; i < cards.length; i++) {
-        if (x > cards[i].x - cards[i].w &&
-            x < cards[i].x + cards[i].w &&
-            y > cards[i].y - cards[i].h &&
-            y < cards[i].y + cards[i].h)
+function isCard(x, y, list) {
+    for (var i = 0; i < list.length; i++) {
+        if (x > list[i].x - list[i].w &&
+            x < list[i].x + list[i].w &&
+            y > list[i].y - list[i].h &&
+            y < list[i].y + list[i].h)
             return i;
     }
     return -1;
