@@ -1,4 +1,4 @@
-function Card(x, y, imgURL, desc, show) {
+function Card(x, y, imgURL, desc) {
     this.x = x;
     this.y = y;
     this.w = 90;
@@ -6,7 +6,6 @@ function Card(x, y, imgURL, desc, show) {
     this.imgURL = imgURL;
     this.img = loadImage(this.imgURL);
     this.desc = desc;
-    this.show = show
     // this.ID = ID;
 
     this.display = function() {
