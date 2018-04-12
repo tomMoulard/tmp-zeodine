@@ -51,13 +51,13 @@ function draw() {
         cards[thisCardsID].x = mouseX;
         cards[thisCardsID].y = mouseY;
     }
-    if (timeToSave > 1000) {
-        console.log("Saving ...");
+    if (timeToSave > 10000) {
         var res = [];
         for (var i = 0; i < cards.length; i++) {
             append(res, cards[i].save());
         }
-        console.log({ res });
+        // console.log("Saving ...");
+        // console.log({ res });
         timeToSave = -1;
     }
     timeToSave += 1;
@@ -67,14 +67,15 @@ function mousePressed() {
     if (mouseX < w && mouseY < h - 245) {
         cardID = isCard(mouseX, mouseY, cards);
         if (cardID == -1) {
-            var newCard = new Card(mouseX, mouseY, "maxresdefault.jpg", "CardID:" + cards.length);
-            append(cards, newCard);
+            // var newCard = new Card(mouseX, mouseY, "maxresdefault.jpg", "CardID:" + cards.length);
+            // append(cards, newCard);
         } else {
             mouseIsPressedHere = true;
             thisCardsID = cardID;
         }
     } else if (mouseX < w && mouseY < h){
         cardID = isCard(mouseX, mouseY, loadedCards);
+        console.log(cardID, loadedCards[cardID])
         var tmpCard = new Card(w/2, h/2, loadedCards[cardID].imgURL, loadedCards[cardID].desc)
         console.log(cardID, tmpCard);
         append(cards, tmpCard);
