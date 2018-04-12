@@ -1,4 +1,4 @@
-function Card(x, y, imgURL, desc) {
+function Card(x, y, imgURL, desc, show) {
     this.x = x;
     this.y = y;
     this.w = 90;
@@ -6,6 +6,7 @@ function Card(x, y, imgURL, desc) {
     this.imgURL = imgURL;
     this.img = loadImage(this.imgURL);
     this.desc = desc;
+    this.show = show
     // this.ID = ID;
 
     this.display = function() {
@@ -22,5 +23,16 @@ function Card(x, y, imgURL, desc) {
             this.y + this.h / 2, // y pos
             this.w,
             this.h)
+    }
+
+    this.save = function(){
+        return {
+            "x": this.x,
+            "y": this.y,
+            "w": this.w,
+            "h": this.h,
+            "img": this.imgURL,
+            "text": this.desc
+        }
     }
 }
