@@ -31,7 +31,7 @@ function setup() {
         append(loadedCards, tmpCard);
     }
     buildBottomCards()
-    console.log(loadedCards, bottomCards)
+    // console.log(loadedCards, bottomCards)
 }
 
 function draw() {
@@ -43,19 +43,21 @@ function draw() {
     for (var i = 0; i < bottomCards.length; i++) {
         bottomCards[i].display();
     }
-    // showing preloaded cards starting with cardPos
-    // first build a "smaller" list
     if (mouseIsPressedHere) {
         cards[thisCardsID].x = mouseX;
         cards[thisCardsID].y = mouseY;
+        // var tmpPos = isCard(mouseX, mouseY, cards)
+        // if (tmpPos != -1){
+        //     //there is a card below the one you are draging
+        // }
     }
-    if (timeToSave > 10000) {
+    if (timeToSave > 1000) {
         var res = [];
         for (var i = 0; i < cards.length; i++) {
             append(res, cards[i].save());
         }
         // console.log("Saving ...");
-        // console.log({ res });
+        console.log({ res });
         timeToSave = -1;
     }
     timeToSave += 1;
@@ -76,12 +78,12 @@ function mousePressed() {
         }
     } else if (mouseX < w && mouseY < h) {
         cardID = isCard(mouseX, mouseY, bottomCards);
-        console.log(cardID, bottomCards[cardID])
+        // console.log(cardID, bottomCards[cardID])
         var tmpCard = new Card(w / 2,
                                h / 2,
                                bottomCards[cardID].imgURL,
                                bottomCards[cardID].desc)
-        console.log(cardID, tmpCard);
+        // console.log(cardID, tmpCard);
         append(cards, tmpCard);
     }
 }
@@ -102,8 +104,8 @@ function mouseReleased() {
 // }
 
 function isCard(x, y, list) {
-    console.log("Checking if (" + x + "," + y + ") is inside a card")
-    console.log(list)
+    // console.log("Checking if (" + x + "," + y + ") is inside a card")
+    // console.log(list)
     for (var i = 0; i < list.length; i++) {
         if (x > list[i].x - list[i].w &&
             x < list[i].x + list[i].w &&
