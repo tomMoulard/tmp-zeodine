@@ -35,7 +35,6 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.
 		log.Println(err)
 		// panic(err)
 	}
-	fmt.Fprintln(w, "Table content:")
 	for que.Next() {
 		var card_id int
 		var name string
@@ -95,7 +94,6 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.
 // router.GET("/nbcard/:userID", dbm.printNBCard)
 // printNBCard output a json style file
 // Query all rows to count them
-// TODO: use SELECT CLOUNT(*)
 func (dbm DbManager) printNBCard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	user_id := ps.ByName("userID")
 
@@ -104,8 +102,7 @@ func (dbm DbManager) printNBCard(w http.ResponseWriter, r *http.Request, ps http
 		log.Println(err)
 		// panic(err)
 	}
-	fmt.Fprintln(w, "Table content:")
-	var nbCards := 0
+	nbCards := 0
 	for que.Next() {
 		nbCards += 1
 		var card_id int
@@ -120,7 +117,6 @@ func (dbm DbManager) printNBCard(w http.ResponseWriter, r *http.Request, ps http
 			log.Println(err)
 			// panic(err)
 		}
-		// fmt.Fprintln(w, "{id:", id, ",name:", name, ",img_url:", img_url, ",description:", description, ",pos_x:", pos_x, ",pos_y:", pos_y, ",ui:", ui.(string), ",user_id:", user_id"}")
 	}
 	fmt.Fprintln(w, "{nbCards: ", nbCards, "}")
 }
@@ -151,6 +147,9 @@ func (dbm DbManager) printNBCard(w http.ResponseWriter, r *http.Request, ps http
 // }
 
 // router.GET("/save/:jsonCards", dbm.save)
+func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	
+}
 
 func (dbm DbManager) setupDB() DbManager {
 	log.Println("Initializing the database...")
