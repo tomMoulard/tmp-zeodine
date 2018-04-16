@@ -6,21 +6,28 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/julienschmidt/httprouter"
 )
 
 type jsonManage struct {
-	err  error
-	data map[string]interface{}
+	err    error
+	data   map[string]interface{}
+	nbcard int
 }
 
 func (jsonS jsonManage) printCard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	chaine := "card" + ps.ByName("id")
+	fmt.Println(chaine)
 
 	if jsonS.err != nil {
 		mapErr := map[string]string{"erreur": "1", "id": ps.ByName("id"), "img": "", "text": "", "card": chaine}
-		res, _ := json.Marshal(mapErr)
+		res, err := json.Marshal(mapErr)
+		if err != nil {
+			fmt.Println("Erreur du Marshal ", err)
+			return
+		}
 		fmt.Fprintln(w, string(res))
 		return
 	}
@@ -28,7 +35,11 @@ func (jsonS jsonManage) printCard(w http.ResponseWriter, r *http.Request, ps htt
 	mapCard0 := jsonS.data[chaine]
 	if mapCard0 == nil {
 		mapErr := map[string]string{"erreur": "-1", "id": ps.ByName("id"), "img": "", "text": "", "card": chaine}
-		res, _ := json.Marshal(mapErr)
+		res, err := json.Marshal(mapErr)
+		if err != nil {
+			fmt.Println("Erreur du Marshal ", err)
+			return
+		}
 		fmt.Fprintln(w, string(res))
 		return
 	}
@@ -36,7 +47,36 @@ func (jsonS jsonManage) printCard(w http.ResponseWriter, r *http.Request, ps htt
 	mapCard := mapCard0.(map[string]interface{})
 
 	mapRes := map[string]string{"erreur": "0", "id": ps.ByName("id"), "img": mapCard["img"].(string), "text": mapCard["text"].(string), "card": chaine}
-	res, _ := json.Marshal(mapRes)
+	res, err := json.Marshal(mapRes)
+	if err != nil {
+		fmt.Println("Erreur du Marshal ", err)
+		return
+	}
+	fmt.Fprintln(w, string(res))
+
+}
+
+func (jsonS jsonManage) printNBCard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	chaine := "card" + ps.ByName("id")
+	fmt.Println(chaine)
+
+	if jsonS.err != nil {
+		mapErr := map[string]string{"erreur": "1", "nbcard": "-1"}
+		res, err := json.Marshal(mapErr)
+		if err != nil {
+			fmt.Println("Erreur du Marshal ", err)
+			return
+		}
+		fmt.Fprintln(w, string(res))
+		return
+	}
+
+	mapRes := map[string]string{"erreur": "0", "nbcard": strconv.Itoa(jsonS.nbcard)}
+	res, err := json.Marshal(mapRes)
+	if err != nil {
+		fmt.Println("Erreur du Marshal ", err)
+		return
+	}
 	fmt.Fprintln(w, string(res))
 
 }
@@ -63,9 +103,11 @@ func main() {
 		json.Unmarshal(b, &jsonS.data)
 	}
 
-	fmt.Println(jsonS.data)
+	jsonS.nbcard = len(jsonS.data)
+	fmt.Println(jsonS)
 
 	router := httprouter.New()
 	router.GET("/card/:id", jsonS.printCard)
+	router.GET("/nbcard", jsonS.printNBCard)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
