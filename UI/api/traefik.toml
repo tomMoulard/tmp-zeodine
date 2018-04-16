@@ -1,0 +1,59 @@
+debug = false
+
+logLevel = "ERROR"
+defaultEntryPoints = ["https","http"]
+
+[entryPoints]
+  [entryPoints.http]
+   address = ":80"
+    [entryPoints.http.redirect]
+     entryPoint = "https"
+  [entryPoints.https]
+   address = ":443"
+  [entryPoints.https.tls]
+
+[retry]
+
+[docker]
+ endpoint = "unix:///var/run/docker.sock"
+ domain = "147.135.194.248"
+ watch = true
+ exposedbydefault = false
+
+[acme]
+ email = "admin@softinnov.fr"
+ storage = "acme.json"
+ entryPoint = "https"
+ OnHostRule = true
+ caServer = "https://acme-staging.api.letsencrypt.org/directory"
+
+[[acme.domains]]
+ main = "facturationzen.fr"
+
+[acme.httpChallenge]
+ entryPoint = "http"
+
+
+
+
+[file]
+
+[backends]
+ [backends.app]
+   [backends.app.servers.server1]
+      url = "http://app:8080"
+ [backends.mailhog]
+   [backends.mailhog.servers.server1]
+      url = "http://mail:8025"
+
+[frontends]
+ [frontends.mailhog]
+     backend = "mailhog"
+     passHostHeader = true
+     [frontends.mailhog.routes.example]
+     rule = "Host:0.0.0.0"
+ [frontends.app]
+     backend = "app"
+     passHostHeader = true
+     [frontends.app.routes.example]
+     rule = "Host:147.135.194.248"
