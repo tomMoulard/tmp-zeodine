@@ -1,12 +1,14 @@
 package main
 
 import (
-	"encoding/json"
+	"database/sql"
+	"time"
+	// "encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"strconv"
+	// "strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"
@@ -19,7 +21,6 @@ type jsonManage struct {
 }
 
 type DbManager struct {
-	id         int
 	dataSource string
 	db         *sql.DB
 	err        error
@@ -29,8 +30,8 @@ type DbManager struct {
 func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	card_id := ps.ByName("id")
 	user_id := ps.ByName("userID")
-  
-	que, err := dbm.db.Query("SELECT * FROM zeodine.cards WHERE card_id = " + card_id +" AND user_id = " + user_id)
+
+	que, err := dbm.db.Query("SELECT * FROM zeodine.cards WHERE card_id = " + card_id + " AND user_id = " + user_id)
 	if err != nil {
 		log.Println(err)
 		// panic(err)
@@ -43,12 +44,12 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.
 		var pos_x int
 		var pos_y int
 		var ui map[string]interface{}
-		err = que.Scan(&id, &name, &img_url, &description, &pos_x, , &pos_y, &ui, &user_id)
+		err = que.Scan(&card_id, &name, &img_url, &description, &pos_x, &pos_y, &ui, &user_id)
 		if err != nil {
 			log.Println(err)
 			// panic(err)
 		}
-		fmt.Fprintln(w, "{id:", id, ",name:", name, ",img_url:", img_url, ",description:", description, ",pos_x:", pos_x, ",pos_y:", pos_y, ",ui:", ui.(string), ",user_id:", user_id"}")
+		fmt.Fprintln(w, "{card_id:", card_id, ",name:", name, ",img_url:", img_url, ",description:", description, ",pos_x:", pos_x, ",pos_y:", pos_y, ",ui:", ui, ",user_id:", user_id, "}")
 	}
 }
 
@@ -112,7 +113,7 @@ func (dbm DbManager) printNBCard(w http.ResponseWriter, r *http.Request, ps http
 		var pos_x int
 		var pos_y int
 		var ui map[string]interface{}
-		err = que.Scan(&id, &name, &img_url, &description, &pos_x, , &pos_y, &ui, &user_id)
+		err = que.Scan(&card_id, &name, &img_url, &description, &pos_x, &pos_y, &ui, &user_id)
 		if err != nil {
 			log.Println(err)
 			// panic(err)
@@ -147,9 +148,9 @@ func (dbm DbManager) printNBCard(w http.ResponseWriter, r *http.Request, ps http
 // }
 
 // router.GET("/save/:jsonCards", dbm.save)
-func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	
-}
+// func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+
+// }
 
 func (dbm DbManager) setupDB() DbManager {
 	log.Println("Initializing the database...")
@@ -197,7 +198,7 @@ func (dbm DbManager) setupDB() DbManager {
 	// 	log.Println(dbm.err)
 	// }
 
-	// Creating a new USERS table 
+	// Creating a new USERS table
 	q := "CREATE TABLE IF NOT EXISTS zeodine.cards (card_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,  name VARCHAR(64) DEFAULT NULL,  img_url VARCHAR(128) DEFAULT NULL,  description VARCHAR(200) DEFAULT NULL,  pos_x INT(8) NOT NULL,  pos_y INT(8) NOT NULL,  ui JSON DEFAULT NULL,  user_id INT DEFAULT NULL, FOREIGN KEY user_id(user_id) REFERENCES users(user_id))"
 	_, dbm.err = dbm.db.Exec(q)
 	if dbm.err != nil {
@@ -209,7 +210,7 @@ func (dbm DbManager) setupDB() DbManager {
 	q = "CREATE TABLE IF NOT EXISTS zeodine.cards (card_id INT(16) NOT NULL AUTO_INCREMENT, name VARCHAR(64) DEFAULT NULL, img_url VARCHAR(128) DEFAULT NULL, description VARCHAR(200) DEFAULT NULL, pos_x INT(8) NOT NULL AUTO_INCREMENT, pos_y INT(8) NOT NULL AUTO_INCREMENT, ui JSON DEFAULT NULL, user_id INT(16) DEFAULT NULL, PRIMARY KEY (task_id, user_id))"
 	_, dbm.err = dbm.db.Exec(q)
 	if dbm.err != nil {
-		log.Println("Error when creating table:", dbm.err)ll
+		log.Println("Error when creating table:", dbm.err)
 	}
 	log.Println("Table ready to be used")
 
@@ -241,7 +242,7 @@ func (dbm DbManager) setupDB() DbManager {
 	// fmt.Println(jsonS)
 
 	// Query
-	_, err = quer.Exec(69, "test_name", "test_url", "test_desc", 50, 50, '{"test":"json"}', 42)
+	_, err = quer.Exec(69, "test_name", "test_url", "test_desc", 50, 50, "{'test':'json'}", 42)
 	if err != nil {
 		log.Println(err)
 	}
@@ -250,19 +251,18 @@ func (dbm DbManager) setupDB() DbManager {
 }
 
 func main() {
-	var jsonS jsonManage
+	// var jsonS jsonManage
 	var dbm DbManager
 
 	dbm = dbm.setupDB()
 
-	defer dbm.close()
-
+	defer dbm.db.Close()
 
 	router := httprouter.New()
 	router.GET("/nbcard/:userID", dbm.printNBCard)
-	router.GET("/save/:jsonCards", dbm.save)
-	router.GET("/load/:userID", dbm.load)
-	router.GET("/newuser/:userID", dbm.newuser)
+	// router.GET("/save/:jsonCards", dbm.save)
+	// router.GET("/load/:userID", dbm.load)
+	// router.GET("/newuser/:userID", dbm.newuser)
 	router.GET("/card/:userID/:id", dbm.card)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
