@@ -93,34 +93,62 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.
 // }
 
 // router.GET("/nbcard/:userID", dbm.printNBCard)
-// func (dbm DbManager) printNBCard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+// printNBCard output a json style file
+// Query all rows to count them
+// TODO: use SELECT CLOUNT(*)
+func (dbm DbManager) printNBCard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	user_id := ps.ByName("userID")
+
+	que, err := dbm.db.Query("SELECT * FROM zeodine.cards WHERE user_id = " + user_id)
+	if err != nil {
+		log.Println(err)
+		// panic(err)
+	}
+	fmt.Fprintln(w, "Table content:")
+	var nbCards := 0
+	for que.Next() {
+		nbCards += 1
+		var card_id int
+		var name string
+		var img_url string
+		var description string
+		var pos_x int
+		var pos_y int
+		var ui map[string]interface{}
+		err = que.Scan(&id, &name, &img_url, &description, &pos_x, , &pos_y, &ui, &user_id)
+		if err != nil {
+			log.Println(err)
+			// panic(err)
+		}
+		// fmt.Fprintln(w, "{id:", id, ",name:", name, ",img_url:", img_url, ",description:", description, ",pos_x:", pos_x, ",pos_y:", pos_y, ",ui:", ui.(string), ",user_id:", user_id"}")
+	}
+	fmt.Fprintln(w, "{nbCards: ", nbCards, "}")
+}
+
+// func (jsonS jsonManage) printNBCard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+// 	chaine := "card" + ps.ByName("id")
+// 	fmt.Println(chaine)
+
+// 	if jsonS.err != nil {
+// 		mapErr := map[string]string{"erreur": "1", "nbcard": "-1"}
+// 		res, err := json.Marshal(mapErr)
+// 		if err != nil {
+// 			fmt.Println("Erreur du Marshal ", err)
+// 			return
+// 		}
+// 		fmt.Fprintln(w, string(res))
+// 		return
+// 	}
+
+// 	mapRes := map[string]string{"erreur": "0", "nbcard": strconv.Itoa(jsonS.nbcard)}
+// 	res, err := json.Marshal(mapRes)
+// 	if err != nil {
+// 		fmt.Println("Erreur du Marshal ", err)
+// 		return
+// 	}
+// 	fmt.Fprintln(w, string(res))
 
 // }
-
-func (jsonS jsonManage) printNBCard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	chaine := "card" + ps.ByName("id")
-	fmt.Println(chaine)
-
-	if jsonS.err != nil {
-		mapErr := map[string]string{"erreur": "1", "nbcard": "-1"}
-		res, err := json.Marshal(mapErr)
-		if err != nil {
-			fmt.Println("Erreur du Marshal ", err)
-			return
-		}
-		fmt.Fprintln(w, string(res))
-		return
-	}
-
-	mapRes := map[string]string{"erreur": "0", "nbcard": strconv.Itoa(jsonS.nbcard)}
-	res, err := json.Marshal(mapRes)
-	if err != nil {
-		fmt.Println("Erreur du Marshal ", err)
-		return
-	}
-	fmt.Fprintln(w, string(res))
-
-}
 
 // router.GET("/save/:jsonCards", dbm.save)
 
