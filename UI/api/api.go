@@ -133,20 +133,7 @@ func (dbm DbManager) createws(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 	//getting ws.lengh
-
-	que, err := dbm.db.Query("SELECT COUNT(*) FROM zeodine.ws")
-	if err != nil {
-		fmt.Fprintln(w, "{ws_id: -1, err:"+err.Error()+", userID:"+ps.ByName("userID")+"}")
-		return
-	}
-	var nbWS int
-	for que.Next() {
-		err = que.Scan(&nbWS)
-		if err != nil {
-			fmt.Fprintln(w, "{ws_id: -1, err:"+err.Error()+", userID:"+ps.ByName("userID")+"}")
-			return
-		}
-	}
+	nbWS := time.Now().Unix()
 
 	quer, err := dbm.db.Prepare("INSERT INTO zeodine.ws VALUES (?, ?, ?)")
 	if err != nil {
@@ -154,12 +141,12 @@ func (dbm DbManager) createws(w http.ResponseWriter, r *http.Request, ps httprou
 		return
 	}
 
-	_, err = quer.Exec(nbWS+1, wsName, user_id)
+	_, err = quer.Exec(nbWS, wsName, user_id)
 	if err != nil {
 		fmt.Fprintln(w, "{ws_id: -1, err:"+err.Error()+", userID:"+ps.ByName("userID")+"}")
 		return
 	}
-	fmt.Fprintln(w, "{ws_id: "+strconv.Itoa(nbWS+1)+"}")
+	fmt.Fprintln(w, "{ws_id: "+strconv.Itoa(nbWS)+"}")
 }
 
 // router.GET("/nbcard/:userID/:wsID ", dbm.nbcard)
