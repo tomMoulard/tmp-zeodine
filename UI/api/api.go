@@ -80,10 +80,10 @@ type DbManager struct {
 
 // router.GET("/newuser/:userID ", dbm.newuser)
 func (dbm DbManager) newuser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-
 	quer, err := dbm.db.Prepare("INSERT INTO zeodine.users VALUES ( ? )")
 	if err != nil {
 		fmt.Fprint(w, "{ saved:false, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		return
 	}
 	defer quer.Close()
 	i, err := strconv.Atoi(ps.ByName("userID"))
