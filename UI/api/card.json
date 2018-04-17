@@ -1,4 +1,9 @@
 {
+"card0" : { 
+        "img" : "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/16777216colors.png/220px-16777216colors.png",
+        "text": "Une carte avec plein de couleur"
+    },
+
     "card1" : { 
         "img" : "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/16777216colors.png/220px-16777216colors.png",
         "text": "Une carte avec plein de couleur"

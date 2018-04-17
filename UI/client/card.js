@@ -4,7 +4,7 @@ function Card(x, y, imgURL, desc) {
     this.w = 90;
     this.h = 180;
     this.imgURL = imgURL;
-    this.img = loadImage(this.imgURL);
+    // this.img = loadImage(this.imgURL);
     this.desc = desc;
     // this.ID = ID;
 
@@ -12,11 +12,11 @@ function Card(x, y, imgURL, desc) {
         noStroke()
         rectMode(CENTER)
         rect(this.x, this.y, this.w, this.h);
-        image(this.img, //imgurl
-            this.x - this.w / 2 + 4, // x pos
-            this.y - this.h / 2 + 4, // y pos
-            this.w - 8, //width of the pict
-            this.h / 2 - 8) // height of the pict
+        // image(this.img, //imgurl
+        //     this.x - this.w / 2 + 4, // x pos
+        //     this.y - this.h / 2 + 4, // y pos
+        //     this.w - 8, //width of the pict
+        //     this.h / 2 - 8) // height of the pict
         text(this.desc, // text to display
             this.x + 4, // x pos
             this.y + this.h / 2, // y pos
