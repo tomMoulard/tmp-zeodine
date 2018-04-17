@@ -123,8 +123,44 @@ func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 	fmt.Fprintln(w, res)
 }
 
-// router.GET("/createws/:userID/:wsNAme ", dbm.createws)
-func (dbm DbManager) createws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
+// router.GET("/createws/:userID/:wsName ", dbm.createws)
+func (dbm DbManager) createws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	user_id, err := strconv.Atoi(ps.ByName("userID"))
+	wsName := ps.ByName("wsName")
+
+	if err != nil {
+		fmt.Fprintln(w, "{ws_id: -1, err:"+err.Error()+", userID:"+ps.ByName("userID")+"}")
+		return
+	}
+	//getting ws.lengh
+
+	que, err := dbm.db.Query("SELECT COUNT(*) FROM zeodine.ws")
+	if err != nil {
+		fmt.Fprintln(w, "{ws_id: -1, err:"+err.Error()+", userID:"+ps.ByName("userID")+"}")
+		return
+	}
+	var nbWS int
+	for que.Next() {
+		err = que.Scan(&nbWS)
+		if err != nil {
+			fmt.Fprintln(w, "{ws_id: -1, err:"+err.Error()+", userID:"+ps.ByName("userID")+"}")
+			return
+		}
+	}
+
+	quer, err := dbm.db.Prepare("INSERT INTO zeodine.ws VALUES (?, ?, ?)")
+	if err != nil {
+		fmt.Fprintln(w, "{ws_id: -1, err:"+err.Error()+", userID:"+ps.ByName("userID")+"}")
+		return
+	}
+
+	_, err = quer.Exec(nbWS+1, wsName, user_id)
+	if err != nil {
+		fmt.Fprintln(w, "{ws_id: -1, err:"+err.Error()+", userID:"+ps.ByName("userID")+"}")
+		return
+	}
+	fmt.Fprintln(w, "{ws_id: "+strconv.Itoa(nbWS+1)+"}")
+}
 
 // router.GET("/nbcard/:userID/:wsID ", dbm.nbcard)
 func (dbm DbManager) nbcard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
@@ -246,7 +282,7 @@ func main() {
 
 	router.GET("/newuser/:userID ", dbm.newuser)
 	router.GET("/ws/:userID ", dbm.ws)
-	router.GET("/createws/:userID/:wsNAme ", dbm.createws)
+	router.GET("/createws/:userID/:wsName ", dbm.createws)
 	router.GET("/nbcard/:userID/:wsID ", dbm.nbcard)
 	router.GET("/load/:userID/:wsID ", dbm.load)
 	router.GET("/card/:userID/:wsID/:cardID", dbm.card)
