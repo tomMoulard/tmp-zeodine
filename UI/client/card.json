@@ -1,11 +1,16 @@
 {
+"card0" : { 
+        "img" : "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/16777216colors.png/220px-16777216colors.png",
+        "text": "Carte 0"
+    },
+
     "card1" : { 
         "img" : "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/16777216colors.png/220px-16777216colors.png",
         "text": "Une carte avec plein de couleur"
     },
 
     "card2" : {
-        "img" : "http://www.iep.utm.edu/wp-content/media/blue.gif",
+        "img" : "https://www.bhphotovideo.com/images/images500x500/LEE_Filters_115R_Peacock_Blue_Color_Effect_688218.jpg",
         "text": "Une carte bleu"
     },
 
@@ -15,7 +20,7 @@
     },
 
     "card4" : {
-        "img" : "https://manyinterestingfacts.files.wordpress.com/2014/08/color-wheel-graduate-shades.jpg?w=500",
+        "img" : "https://manyinterestingfacts.files.wordpress.com/2014/08/color-wheel-graduate-shades.jpg",
         "text": "Un cercle chromatique"
     },
         
