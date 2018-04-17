@@ -82,19 +82,19 @@ type DbManager struct {
 func (dbm DbManager) newuser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	quer, err := dbm.db.Prepare("INSERT INTO zeodine.users VALUES ( ? )")
 	if err != nil {
-		fmt.Fprint(w, "{ saved:false, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{ saved:false, err: %s, userID: %s , code:0}", err.Error(), ps.ByName("userID"))
 		return
 	}
 	defer quer.Close()
 	i, err := strconv.Atoi(ps.ByName("userID"))
 	// log.Println(i, err, ps.ByName("userID"))
 	if err != nil {
-		fmt.Fprint(w, "{ saved:false, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{ saved:false, err: %s, userID: %s, code:1 }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	_, err = quer.Exec(i)
 	if err != nil {
-		fmt.Fprint(w, "{ saved:false, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{ saved:false, err: %s, userID: %s, code:2 }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	fmt.Fprintln(w, "{saved:True}")
@@ -104,7 +104,7 @@ func (dbm DbManager) newuser(w http.ResponseWriter, r *http.Request, ps httprout
 func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	que, err := dbm.db.Query("SELECT ws_id, ws_name, user_id FROM zeodine.ws WHERE user_id = " + ps.ByName("userID"))
 	if err != nil {
-		fmt.Fprint(w, "{ err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{ err: %s, userID: %s, code:0  }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	res := "{"
@@ -129,24 +129,24 @@ func (dbm DbManager) createws(w http.ResponseWriter, r *http.Request, ps httprou
 	wsName := ps.ByName("wsName")
 
 	if err != nil {
-		fmt.Fprint(w, "{ws_id: -1, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{ws_id: -1, err: %s, userID: %s, code:0 }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	//getting ws.lengh
-	nbWS := time.Now().Format("20060102150405")
+	nbWS := time.Now().Unix()
 
 	quer, err := dbm.db.Prepare("INSERT INTO zeodine.ws VALUES (?, ?, ?)")
 	if err != nil {
-		fmt.Fprint(w, "{ws_id: -1, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{ws_id: -1, err: %s, userID: %s, code:1 }", err.Error(), ps.ByName("userID"))
 		return
 	}
 
 	_, err = quer.Exec(nbWS, wsName, user_id)
 	if err != nil {
-		fmt.Fprint(w, "{ws_id: -1, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{ws_id: -1, err: %s, userID: %s, code:2 }", err.Error(), ps.ByName("userID"))
 		return
 	}
-	fmt.Fprint(w, "{ws_id: %d}", nbWS)
+	fmt.Fprintf(w, "{ws_id: %d}", nbWS)
 }
 
 // router.GET("/nbcard/:userID/:wsID ", dbm.nbcard)
@@ -163,7 +163,7 @@ func (dbm DbManager) nbcard(w http.ResponseWriter, r *http.Request, ps httproute
 	// }
 	que, err := dbm.db.Query("SELECT stack_id FROM zeodine.stacks where user_id = " + ps.ByName("userID") + " AND ws_id = " + ps.ByName("wsID"))
 	if err != nil {
-		fmt.Fprint(w, "{nb_card: -1, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		fmt.Fprint(w, "{nb_card: -1, err: %s, userID: %s, code:0 }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	nbcard := 0
@@ -171,7 +171,7 @@ func (dbm DbManager) nbcard(w http.ResponseWriter, r *http.Request, ps httproute
 		var stack_id int
 		err = que.Scan(&stack_id)
 		if err != nil {
-			fmt.Fprint(w, "{nb_card: -1, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+			fmt.Fprint(w, "{nb_card: -1, err: %s, userID: %s, code:1 }", err.Error(), ps.ByName("userID"))
 			return
 		}
 		nbcard += 1
@@ -295,11 +295,11 @@ func main() {
 
 	router := httprouter.New()
 
-	router.GET("/newuser/:userID ", dbm.newuser)
-	router.GET("/ws/:userID ", dbm.ws)
-	router.GET("/createws/:userID/:wsName ", dbm.createws)
-	router.GET("/nbcard/:userID/:wsID ", dbm.nbcard)
-	router.GET("/load/:userID/:wsID ", dbm.load)
+	router.GET("/newuser/:userID", dbm.newuser)
+	router.GET("/ws/:userID", dbm.ws)
+	router.GET("/createws/:userID/:wsName", dbm.createws)
+	router.GET("/nbcard/:userID/:wsID", dbm.nbcard)
+	router.GET("/load/:userID/:wsID", dbm.load)
 	router.GET("/card/:userID/:wsID/:cardID", dbm.card)
 	router.GET("/save/:json", dbm.save)
 	log.Fatal(http.ListenAndServe(":8080", router))
