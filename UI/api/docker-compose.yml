@@ -15,21 +15,21 @@ services:
   #   labels:
   #     - "traefik.frontend.rule=Host:monitor.example.com"
   #     - "traefik.port=8080"
-  traefik:
-    image: traefik:1.3.6
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - $PWD/traefik.toml:/traefik.toml
-      - $PWD/acme.json:/acme.json
-    ports:
-      - "80:80"
-      - "443:443"
-    labels:
-      - "traefik.frontend.rule=Host:147.135.194.248"
-      - "traefik.port=8080"
-    networks:
-      - webapp
-    container_name: traefik
+  # traefik:
+  #   image: traefik:1.3.6
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - $PWD/traefik.toml:/traefik.toml
+  #     - $PWD/acme.json:/acme.json
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   labels:
+  #     - "traefik.frontend.rule=Host:147.135.194.248"
+  #     - "traefik.port=8080"
+  #   networks:
+  #     - webapp
+  #   container_name: traefik
   db:
     image: mysql:5.7 #mysql5.7
     environment:
@@ -48,7 +48,7 @@ services:
     build:
       context: .
       dockerfile: "./Dockerfile"
-    restart: always
+    # restart: always
     networks:
       - webapp
       - default

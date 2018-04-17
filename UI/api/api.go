@@ -80,34 +80,105 @@ type DbManager struct {
 
 // router.GET("/newuser/:userID ", dbm.newuser)
 func (dbm DbManager) newuser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-
 	quer, err := dbm.db.Prepare("INSERT INTO zeodine.users VALUES ( ? )")
 	if err != nil {
-		log.Println(err)
+		fmt.Fprint(w, "{ saved:false, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		return
 	}
 	defer quer.Close()
 	i, err := strconv.Atoi(ps.ByName("userID"))
 	// log.Println(i, err, ps.ByName("userID"))
 	if err != nil {
-		fmt.Fprintln(w, "{saved:false, err:", err, "}")
+		fmt.Fprint(w, "{ saved:false, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	_, err = quer.Exec(i)
 	if err != nil {
-		fmt.Fprintln(w, "{saved:false, err:", err, "}")
+		fmt.Fprint(w, "{ saved:false, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	fmt.Fprintln(w, "{saved:True}")
 }
 
 // router.GET("/ws/:userID ", dbm.ws)
-func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
+func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	que, err := dbm.db.Query("SELECT ws_id, ws_name, user_id FROM zeodine.ws WHERE user_id = " + ps.ByName("userID"))
+	if err != nil {
+		fmt.Fprint(w, "{ err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		return
+	}
+	res := "{"
+	for que.Next() {
+		var ws_id int
+		var ws_name string
+		var user_id int
+		err = que.Scan(&ws_id, &ws_name, &user_id)
+		if err != nil {
+			res += "{err:" + err.Error() + ", userID:" + ps.ByName("userID") + "}"
+		} else {
+			res += "{ ws_id:" + strconv.Itoa(ws_id) + ", ws_name:" + ws_name + ", user_id:" + strconv.Itoa(user_id) + "}"
+		}
+	}
+	res += "}"
+	fmt.Fprintln(w, res)
+}
 
-// router.GET("/createws/:userID/:wsNAme ", dbm.createws)
-func (dbm DbManager) createws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
+// router.GET("/createws/:userID/:wsName ", dbm.createws)
+func (dbm DbManager) createws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	user_id, err := strconv.Atoi(ps.ByName("userID"))
+	wsName := ps.ByName("wsName")
+
+	if err != nil {
+		fmt.Fprint(w, "{ws_id: -1, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		return
+	}
+	//getting ws.lengh
+	nbWS := time.Now().Format("20060102150405")
+
+	quer, err := dbm.db.Prepare("INSERT INTO zeodine.ws VALUES (?, ?, ?)")
+	if err != nil {
+		fmt.Fprint(w, "{ws_id: -1, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		return
+	}
+
+	_, err = quer.Exec(nbWS, wsName, user_id)
+	if err != nil {
+		fmt.Fprint(w, "{ws_id: -1, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		return
+	}
+	fmt.Fprint(w, "{ws_id: %d}", nbWS)
+}
 
 // router.GET("/nbcard/:userID/:wsID ", dbm.nbcard)
-func (dbm DbManager) nbcard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
+func (dbm DbManager) nbcard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	// user_id, err1 := strconv.Atoi(ps.ByName("userID"))
+	// ws_id, err2 := strconv.Atoi(ps.ByName("wsID"))
+	// if err1 != nil {
+	// 	fmt.Fprint(w, "{nb_card: -1, err: %s, userID: %s }", err1.Error(), ps.ByName("userID"))
+	// 	return
+	// }
+	// if err2 != nil {
+	// 	fmt.Fprint(w, "{nb_card: -1, err: %s, userID: %s }", err2.Error(), ps.ByName("userID"))
+	// 	return
+	// }
+	que, err := dbm.db.Query("SELECT stack_id FROM zeodine.stacks where user_id = " + ps.ByName("userID") + " AND ws_id = " + ps.ByName("wsID"))
+	if err != nil {
+		fmt.Fprint(w, "{nb_card: -1, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+		return
+	}
+	nbcard := 0
+	for que.Next() {
+		var stack_id int
+		err = que.Scan(&stack_id)
+		if err != nil {
+			fmt.Fprint(w, "{nb_card: -1, err: %s, userID: %s }", err.Error(), ps.ByName("userID"))
+			return
+		}
+		nbcard += 1
+	}
+	fmt.Fprintln(w, "{nb_card: "+strconv.Itoa(nbcard)+"}")
+
+}
 
 // router.GET("/load/:userID/:wsID ", dbm.load)
 func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
@@ -226,7 +297,7 @@ func main() {
 
 	router.GET("/newuser/:userID ", dbm.newuser)
 	router.GET("/ws/:userID ", dbm.ws)
-	router.GET("/createws/:userID/:wsNAme ", dbm.createws)
+	router.GET("/createws/:userID/:wsName ", dbm.createws)
 	router.GET("/nbcard/:userID/:wsID ", dbm.nbcard)
 	router.GET("/load/:userID/:wsID ", dbm.load)
 	router.GET("/card/:userID/:wsID/:cardID", dbm.card)
