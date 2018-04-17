@@ -101,7 +101,27 @@ func (dbm DbManager) newuser(w http.ResponseWriter, r *http.Request, ps httprout
 }
 
 // router.GET("/ws/:userID ", dbm.ws)
-func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
+func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	que, err := dbm.db.Query("SELECT ws_id, ws_name, user_id FROM zeodine.ws WHERE user_id = " + ps.ByName("userID"))
+	if err != nil {
+		fmt.Fprintln(w, "{err: "+err.Error()+"}")
+		return
+	}
+	res := "{"
+	for que.Next() {
+		var ws_id int
+		var ws_name string
+		var user_id int
+		err = que.Scan(&ws_id, &ws_name, &user_id)
+		if err != nil {
+			res += "{err:" + err.Error() + ", userID:" + ps.ByName("userID") + "}"
+		} else {
+			res += "{ ws_id:" + strconv.Itoa(ws_id) + ", ws_name:" + ws_name + ", user_id:" + strconv.Itoa(user_id) + "}"
+		}
+	}
+	res += "}"
+	fmt.Fprintln(w, res)
+}
 
 // router.GET("/createws/:userID/:wsNAme ", dbm.createws)
 func (dbm DbManager) createws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
