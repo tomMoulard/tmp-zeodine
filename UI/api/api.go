@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
+	"strconv"
 	"time"
 	// "encoding/json"
 
@@ -77,7 +79,26 @@ type DbManager struct {
 // }
 
 // router.GET("/newuser/:userID ", dbm.newuser)
-func (dbm DbManager) newuser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
+func (dbm DbManager) newuser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+
+	quer, err := dbm.db.Prepare("INSERT INTO zeodine.users VALUES ( ? )")
+	if err != nil {
+		log.Println(err)
+	}
+	defer quer.Close()
+	i, err := strconv.Atoi(ps.ByName("userID"))
+	// log.Println(i, err, ps.ByName("userID"))
+	if err != nil {
+		fmt.Fprintln(w, "{saved:false, err:", err, "}")
+		return
+	}
+	_, err = quer.Exec(i)
+	if err != nil {
+		fmt.Fprintln(w, "{saved:false, err:", err, "}")
+		return
+	}
+	fmt.Fprintln(w, "{saved:True}")
+}
 
 // router.GET("/ws/:userID ", dbm.ws)
 func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
@@ -203,12 +224,12 @@ func main() {
 
 	router := httprouter.New()
 
-	// router.GET("/newuser/:userID ", dbm.newuser)
-	// router.GET("/ws/:userID ", dbm.ws)
-	// router.GET("/createws/:userID/:wsNAme ", dbm.createws)
-	// router.GET("/nbcard/:userID/:wsID ", dbm.nbcard)
-	// router.GET("/load/:userID/:wsID ", dbm.load)
-	// router.GET("/card/:userID/:wsID/:cardID", dbm.card)
-	// router.GET("/save/:json", dbm.save)
+	router.GET("/newuser/:userID ", dbm.newuser)
+	router.GET("/ws/:userID ", dbm.ws)
+	router.GET("/createws/:userID/:wsNAme ", dbm.createws)
+	router.GET("/nbcard/:userID/:wsID ", dbm.nbcard)
+	router.GET("/load/:userID/:wsID ", dbm.load)
+	router.GET("/card/:userID/:wsID/:cardID", dbm.card)
+	router.GET("/save/:json", dbm.save)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
