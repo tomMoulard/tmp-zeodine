@@ -2,9 +2,10 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"time"
 	// "encoding/json"
-	"fmt"
+
 	"log"
 	"net/http"
 	"os"
@@ -26,123 +27,84 @@ type DbManager struct {
 	err        error
 }
 
-// router.GET("/card/:userID/:id", dbm.card)
-func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	card_id := ps.ByName("id")
-	user_id := ps.ByName("userID")
+// // router.GET("/card/:userID/:id", dbm.card)
+// func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+// 	card_id := ps.ByName("id")
+// 	user_id := ps.ByName("userID")
 
-	que, err := dbm.db.Query("SELECT * FROM zeodine.cards WHERE card_id = " + card_id + " AND user_id = " + user_id)
-	if err != nil {
-		log.Println(err)
-		// panic(err)
-	}
-	for que.Next() {
-		var card_id int
-		var name string
-		var img_url string
-		var description string
-		var pos_x int
-		var pos_y int
-		var ui map[string]interface{}
-		err = que.Scan(&card_id, &name, &img_url, &description, &pos_x, &pos_y, &ui, &user_id)
-		if err != nil {
-			log.Println(err)
-			// panic(err)
-		}
-		fmt.Fprintln(w, "{card_id:", card_id, ",name:", name, ",img_url:", img_url, ",description:", description, ",pos_x:", pos_x, ",pos_y:", pos_y, ",ui:", ui, ",user_id:", user_id, "}")
-	}
-}
-
-// func (jsonS jsonManage) printCard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-// 	chaine := "card" + ps.ByName("id")
-// 	fmt.Println(chaine)
-
-// 	if jsonS.err != nil {
-// 		mapErr := map[string]string{"erreur": "1", "id": ps.ByName("id"), "img": "", "text": "", "card": chaine}
-// 		res, err := json.Marshal(mapErr)
-// 		if err != nil {
-// 			fmt.Println("Erreur du Marshal ", err)
-// 			return
-// 		}
-// 		fmt.Fprintln(w, string(res))
-// 		return
-// 	}
-
-// 	mapCard0 := jsonS.data[chaine]
-// 	if mapCard0 == nil {
-// 		mapErr := map[string]string{"erreur": "-1", "id": ps.ByName("id"), "img": "", "text": "", "card": chaine}
-// 		res, err := json.Marshal(mapErr)
-// 		if err != nil {
-// 			fmt.Println("Erreur du Marshal ", err)
-// 			return
-// 		}
-// 		fmt.Fprintln(w, string(res))
-// 		return
-// 	}
-
-// 	mapCard := mapCard0.(map[string]interface{})
-
-// 	mapRes := map[string]string{"erreur": "0", "id": ps.ByName("id"), "img": mapCard["img"].(string), "text": mapCard["text"].(string), "card": chaine}
-// 	res, err := json.Marshal(mapRes)
+// 	que, err := dbm.db.Query("SELECT * FROM zeodine.cards WHERE card_id = " + card_id + " AND user_id = " + user_id)
 // 	if err != nil {
-// 		fmt.Println("Erreur du Marshal ", err)
-// 		return
+// 		log.Println(err)
+// 		// panic(err)
 // 	}
-// 	fmt.Fprintln(w, string(res))
-
-// }
-
-// router.GET("/nbcard/:userID", dbm.printNBCard)
-// printNBCard output a json style file
-// Query all rows to count them
-func (dbm DbManager) printNBCard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-	user_id := ps.ByName("userID")
-
-	que, err := dbm.db.Query("SELECT COUNT(*) FROM zeodine.cards WHERE user_id = " + user_id)
-	if err != nil {
-		log.Println(err)
-		// panic(err)
-	}
-	for que.Next() {
-		var nbCards int
-		err = que.Scan(&nbCards)
-		if err != nil {
-			log.Println(err)
-			// panic(err)
-		}
-		fmt.Fprintln(w, "{nbCards: ", nbCards, "}")
-	}
-}
-
-// func (jsonS jsonManage) printNBCard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-// 	chaine := "card" + ps.ByName("id")
-// 	fmt.Println(chaine)
-
-// 	if jsonS.err != nil {
-// 		mapErr := map[string]string{"erreur": "1", "nbcard": "-1"}
-// 		res, err := json.Marshal(mapErr)
+// 	for que.Next() {
+// 		var card_id int
+// 		var name string
+// 		var img_url string
+// 		var description string
+// 		var pos_x int
+// 		var pos_y int
+// 		var ui string
+// 		err = que.Scan(&card_id, &name, &img_url, &description, &pos_x, &pos_y, &ui, &user_id)
 // 		if err != nil {
-// 			fmt.Println("Erreur du Marshal ", err)
-// 			return
+// 			log.Println("error when query a card", err)
+// 			// panic(err)
 // 		}
-// 		fmt.Fprintln(w, string(res))
-// 		return
+// 		fmt.Fprintln(w, "{card_id:", card_id, ",name:", name, ",img_url:", img_url, ",description:", description, ",pos_x:", pos_x, ",pos_y:", pos_y, ",ui:", ui, ",user_id:", user_id, "}")
 // 	}
+// }
 
-// 	mapRes := map[string]string{"erreur": "0", "nbcard": strconv.Itoa(jsonS.nbcard)}
-// 	res, err := json.Marshal(mapRes)
+// // router.GET("/nbcard/:userID", dbm.printNBCard)
+// // printNBCard output a json style file
+// // Query all rows to count them
+// func (dbm DbManager) printNBCard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+// 	user_id := ps.ByName("userID")
+
+// 	que, err := dbm.db.Query("SELECT COUNT(*) FROM zeodine.cards WHERE user_id = " + user_id)
 // 	if err != nil {
-// 		fmt.Println("Erreur du Marshal ", err)
-// 		return
+// 		log.Println(err)
+// 		// panic(err)
 // 	}
-// 	fmt.Fprintln(w, string(res))
-
+// 	for que.Next() {
+// 		var nbCards int
+// 		err = que.Scan(&nbCards)
+// 		if err != nil {
+// 			log.Println(err)
+// 			// panic(err)
+// 		}
+// 		fmt.Fprintln(w, "{nbCards: ", nbCards, "}")
+// 	}
 // }
 
-// router.GET("/save/:jsonCards", dbm.save)
-// func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+// router.GET("/newuser/:userID ", dbm.newuser)
+func (dbm DbManager) newuser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
 
-// }
+// router.GET("/ws/:userID ", dbm.ws)
+func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
+
+// router.GET("/createws/:userID/:wsNAme ", dbm.createws)
+func (dbm DbManager) createws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
+
+// router.GET("/nbcard/:userID/:wsID ", dbm.nbcard)
+func (dbm DbManager) nbcard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
+
+// router.GET("/load/:userID/:wsID ", dbm.load)
+func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
+
+// router.GET("/card/:userID/:wsID/:cardID", dbm.card)
+func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
+
+// router.GET("/save/:json", dbm.save)
+func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
+
+func (dbm DbManager) createTable(tableName, tableContent string) {
+	q := "CREATE TABLE IF NOT EXISTS " + tableName + " (" + tableContent + ")"
+	_, dbm.err = dbm.db.Exec(q)
+	if dbm.err != nil {
+		log.Println("Error when creating "+tableName+" table:", dbm.err)
+	}
+	log.Println(tableName, "table ready to be used")
+}
 
 func (dbm DbManager) setupDB() DbManager {
 	log.Println("Initializing the database...")
@@ -175,69 +137,58 @@ func (dbm DbManager) setupDB() DbManager {
 		os.Exit(0)
 	}
 	log.Println("Connected")
-	// Creating a new database
-	// _, dbm.err = dbm.db.Exec("CREATE DATABASE IF NOT EXISTS zeodine")
-	// _, dbm.err = dbm.db.Exec("CREATE DATABASE zeodine")
-	// if dbm.err != nil {
-	// log.Println(err)
-	// 	log.Printf("Error when creating db: %v\n", dbm.err)
-	// }
-	// log.Println("Database created")
-
-	// Using the fleshly created database:
-	// _, dbm.err = dbm.db.Exec("USE zeodine")
-	// if dbm.err != nil {
-	// 	log.Println(dbm.err)
-	// }
-
-	// Creating a new USERS table
-	q := "CREATE TABLE IF NOT EXISTS zeodine.cards (card_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,  name VARCHAR(64) DEFAULT NULL,  img_url VARCHAR(128) DEFAULT NULL,  description VARCHAR(200) DEFAULT NULL,  pos_x INT(8) NOT NULL,  pos_y INT(8) NOT NULL,  ui JSON DEFAULT NULL,  user_id INT DEFAULT NULL, FOREIGN KEY user_id(user_id) REFERENCES users(user_id))"
-	_, dbm.err = dbm.db.Exec(q)
-	if dbm.err != nil {
-		log.Println("Error when creating table:", dbm.err)
-	}
-	log.Println("Table ready to be used")
 
 	// Creating a new CARDS table
-	q = "CREATE TABLE IF NOT EXISTS zeodine.cards (card_id INT(16) NOT NULL AUTO_INCREMENT, name VARCHAR(64) DEFAULT NULL, img_url VARCHAR(128) DEFAULT NULL, description VARCHAR(200) DEFAULT NULL, pos_x INT(8) NOT NULL AUTO_INCREMENT, pos_y INT(8) NOT NULL AUTO_INCREMENT, ui JSON DEFAULT NULL, user_id INT(16) DEFAULT NULL, PRIMARY KEY (task_id, user_id))"
-	_, dbm.err = dbm.db.Exec(q)
-	if dbm.err != nil {
-		log.Println("Error when creating table:", dbm.err)
+	dbm.createTable("zeodine.cards", "card_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, body JSON DEFAULT NULL, stack_id INT DEFAULT NULL")
+
+	// Creating a new USERS table
+	dbm.createTable("zeodine.users", "user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY")
+
+	// Creating a new WS table
+	dbm.createTable("zeodine.ws", "ws_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,ws_name VARCHAR(64) DEFAULT NULL,user_id INT DEFAULT NULL,FOREIGN KEY user_id(user_id) REFERENCES users(user_id)")
+
+	// Creating a new WS table
+	dbm.createTable("zeodine.stacks", "stack_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,group_id INT DEFAULT NULL,user_id INT DEFAULT NULL,card_id INT DEFAULT NULL,ws_id INT DEFAULT NULL,FOREIGN KEY user_id(user_id) REFERENCES users(user_id),FOREIGN KEY card_id(card_id) REFERENCES cards(card_id),FOREIGN KEY ws_id(ws_id) REFERENCES ws(ws_id)")
+
+	var jsonS jsonManage
+	// //Parsing global cards
+	file, err := os.Open("card.json")
+	defer file.Close()
+
+	if err != nil {
+		panic("Erreur ouverture fichier")
 	}
-	log.Println("Table ready to be used")
+	info, _ := file.Stat()
+	b := make([]byte, info.Size())
+	_, err = file.Read(b)
+
+	if err != nil {
+		panic("Erreur lecture fichier")
+	}
+	// fmt.Println(n, " octets lus")
+	json.Unmarshal(b, &jsonS.data)
+
+	jsonS.nbcard = len(jsonS.data)
+	// fmt.Println(jsonS)
 
 	//inserting the default cards
-	quer, err := dbm.db.Prepare("INSERT INTO zeodine.cards VALUES (?, ?, ?, ?, ?, ?, ?, NULL)")
+	quer, err := dbm.db.Prepare("INSERT INTO zeodine.cards VALUES (?, ?, NULL)")
 	if err != nil {
 		log.Println(err)
 	}
 	defer quer.Close()
 
-	// //Parsing global cards
-	// file, err := os.Open("card.json")
-	// defer file.Close()
-
-	// if err != nil {
-	// 	panic("Erreur ouverture fichier")
-	// }
-	// info, _ := file.Stat()
-	// b       := make([]byte, info.Size())
-	// n, err := file.Read(b)
-
-	// if err != nil {
-	// 	panic("Erreur lecture fichier")
-	// }
-	// // fmt.Println(n, " octets lus")
-	// json.Unmarshal(b, &jsonS.data)
-
-	// jsonS.nbcard = len(jsonS.data)
-	// fmt.Println(jsonS)
+	// fmt.Println(jsonS.data, jsonS.data.(map[string]interface{})["card2"])
 
 	// Query
-	_, err = quer.Exec(69, "test_name", "test_url", "test_desc", 50, 50, "{'test':'json'}", 42)
-	if err != nil {
-		log.Println(err)
-	}
+	// for i := 1; i < 6; i++ {
+	// 	// j := strconv.Itoa(i)
+	// 	// _, err = quer.Exec(i, jsonS.data.(map[string]interface{})["card"+j])
+	// 	_, err = quer.Exec(i, "{card:42}")
+	// 	if err != nil {
+	// 		log.Println(err)
+	// 	}
+	// }
 
 	return dbm
 }
@@ -251,10 +202,13 @@ func main() {
 	defer dbm.db.Close()
 
 	router := httprouter.New()
-	router.GET("/nbcard/:userID", dbm.printNBCard)
-	// router.GET("/save/:jsonCards", dbm.save)
-	// router.GET("/load/:userID", dbm.load)
-	// router.GET("/newuser/:userID", dbm.newuser)
-	router.GET("/card/:userID/:id", dbm.card)
+
+	// router.GET("/newuser/:userID ", dbm.newuser)
+	// router.GET("/ws/:userID ", dbm.ws)
+	// router.GET("/createws/:userID/:wsNAme ", dbm.createws)
+	// router.GET("/nbcard/:userID/:wsID ", dbm.nbcard)
+	// router.GET("/load/:userID/:wsID ", dbm.load)
+	// router.GET("/card/:userID/:wsID/:cardID", dbm.card)
+	// router.GET("/save/:json", dbm.save)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
