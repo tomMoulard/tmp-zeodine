@@ -78,26 +78,22 @@ type DbManager struct {
 // 	}
 // }
 
-// router.GET("/newuser/:userID ", dbm.newuser)
-func (dbm DbManager) newuser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+// router.GET("/newuser ", dbm.newuser)
+func (dbm DbManager) newuser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	quer, err := dbm.db.Prepare("INSERT INTO zeodine.users VALUES ( ? )")
 	if err != nil {
-		fmt.Fprintf(w, "{ saved:false, err: %s, userID: %s , code:0}", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{ user_id:-1, err: %s, code:0}", err.Error())
 		return
 	}
 	defer quer.Close()
-	i, err := strconv.Atoi(ps.ByName("userID"))
-	// log.Println(i, err, ps.ByName("userID"))
+
+	userID := time.Now().Unix()
+	_, err = quer.Exec(userID)
 	if err != nil {
-		fmt.Fprintf(w, "{ saved:false, err: %s, userID: %s, code:1 }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{ user_id:-1, err: %s, code:1 }", err.Error())
 		return
 	}
-	_, err = quer.Exec(i)
-	if err != nil {
-		fmt.Fprintf(w, "{ saved:false, err: %s, userID: %s, code:2 }", err.Error(), ps.ByName("userID"))
-		return
-	}
-	fmt.Fprintln(w, "{saved:True}")
+	fmt.Fprintf(w, "{user_id:%d}", userID)
 }
 
 // router.GET("/ws/:userID ", dbm.ws)
@@ -116,7 +112,7 @@ func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 		if err != nil {
 			res += "{err:" + err.Error() + ", userID:" + ps.ByName("userID") + "}"
 		} else {
-			res += "{ ws_id:" + strconv.Itoa(ws_id) + ", ws_name:" + ws_name + ", user_id:" + strconv.Itoa(user_id) + "}"
+			res += "{ ws_id:" + strconv.Itoa(ws_id) + ", ws_name:" + ws_name + ", user_id:" + strconv.Itoa(user_id) + "},"
 		}
 	}
 	res += "}"
@@ -181,7 +177,40 @@ func (dbm DbManager) nbcard(w http.ResponseWriter, r *http.Request, ps httproute
 }
 
 // router.GET("/load/:userID/:wsID ", dbm.load)
-func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
+func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	// Query stacks
+	que, err := dbm.db.Query("SELECT stack_id FROM zeodine.stacks where user_id = " + ps.ByName("userID") + " AND ws_id = " + ps.ByName("wsID"))
+	if err != nil {
+		fmt.Fprint(w, "{err: %s, userID: %s, code:0 }", err.Error(), ps.ByName("userID"))
+		return
+	}
+	res := "{"
+	for que.Next() {
+		var stack_id int
+		err = que.Scan(&stack_id)
+		if err != nil {
+			fmt.Fprint(w, "{err: %s, userID: %s, code:1 }", err.Error(), ps.ByName("userID"))
+			return
+		}
+		stack_id_str := strconv.Itoa(stack_id)
+		// Query card
+		que2, err := dbm.db.Query("SELECT body FROM zeodine.cards where stack_id = " + stack_id_str)
+		if err != nil {
+			fmt.Fprint(w, "{err: %s, userID: %s, code:2 }", err.Error(), ps.ByName("userID"))
+			return
+		}
+		for que2.Next() {
+			var card string
+			err = que.Scan(&card)
+			if err != nil {
+				res += "{err: " + err.Error() + ", userID: " + ps.ByName("userID") + ", code:3 }"
+			} else {
+				res += card
+			}
+		}
+	}
+	fmt.Fprintln(w, res+"}")
+}
 
 // router.GET("/card/:userID/:wsID/:cardID", dbm.card)
 func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {}
@@ -295,7 +324,7 @@ func main() {
 
 	router := httprouter.New()
 
-	router.GET("/newuser/:userID", dbm.newuser)
+	router.GET("/newuser", dbm.newuser)
 	router.GET("/ws/:userID", dbm.ws)
 	router.GET("/createws/:userID/:wsName", dbm.createws)
 	router.GET("/nbcard/:userID/:wsID", dbm.nbcard)
