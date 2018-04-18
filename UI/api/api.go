@@ -164,6 +164,45 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, ps httprouter.
 
 // router.GET("/card/:userID/:wsID/:cardID", dbm.card)
 func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	// Query stacks
+	que, err := dbm.db.Query("SELECT card_id FROM zeodine.stacks where user_id = " + ps.ByName("userID") + " AND ws_id = " + ps.ByName("wsID"))
+	if err != nil {
+		fmt.Fprint(w, "{err: %s, userID: %s, code:0 }", err.Error(), ps.ByName("userID"))
+		return
+	}
+	exist := false
+	for que.Next() && !exist {
+		var card_id int
+		err = que.Scan(&card_id)
+		if err != nil {
+			fmt.Fprint(w, "{err: %s, userID: %s, code:1 }", err.Error(), ps.ByName("userID"))
+			return
+		}
+		card_id_str := strconv.Itoa(card_id)
+		if (card_id_str == ps.ByName("cardID"))
+		{
+			exist = true
+		}
+	}
+	if exist {
+		// Query card
+		que, err = dbm.db.Query("SELECT body FROM zeodine.cards where card_id = " + card_id_str)
+		if err != nil {
+			fmt.Fprint(w, "{err: %s, userID: %s, code:2 }", err.Error(), ps.ByName("userID"))
+			return
+		}
+		for que.Next() {
+			var card string
+			err = que.Scan(&card)
+			if err != nil {
+				fmt.Fprint(w, "{err: %s, userID: %s, code:3 }", err.Error(), ps.ByName("userID"))
+				return
+			}
+			fmt.Fprintln(w, card)
+		}
+	} else {
+		fmt.Fprint(w, "{err: Error: There is no card with this id, userID: %s, code:3 }", ps.ByName("userID"))
+	}
 }
 
 // router.GET("/save/:json", dbm.save)
