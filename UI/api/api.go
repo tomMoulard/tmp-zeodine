@@ -52,7 +52,7 @@ func (dbm DbManager) newuser(w http.ResponseWriter, r *http.Request, _ httproute
 // router.GET("/ws/:userID ", dbm.ws)
 func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
-	que, err := dbm.db.Prepare("SELECT ws_id, ws_name, userID FROM zeodine.ws WHERE user_id = ?")
+	que, err := dbm.db.Prepare("SELECT ws_id, ws_name, user_id FROM zeodine.ws WHERE user_id = ?")
 	if err != nil {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, "{ \"err\": \"%s\", \"userID\": %s, \"code\":0  }", err.Error(), ps.ByName("userID"))
