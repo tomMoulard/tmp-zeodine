@@ -59,7 +59,7 @@ func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 		return
 	}
 	defer que.Close()
-	quer, err := dbm.db.Query(ps.ByName("userID"))
+	quer, err := dbm.db.Query(strconv.Itoa(ps.ByName("userID")))
 	if err != nil {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, "{ \"err\": \"%s\", \"userID\": %s, \"code\":1  }", err.Error(), ps.ByName("userID"))
