@@ -55,14 +55,14 @@ func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 	que, err := dbm.db.Prepare("SELECT ws_id, ws_name, user_id FROM zeodine.ws WHERE user_id = ?")
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, "{ \"err\": \"%s\", \"userID\": %s, \"code\":0  }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{ \"err\": \"%s\", \"userID\": %s, \"code\":0 }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	defer que.Close()
-	quer, err := dbm.db.Query(strconv.Itoa(ps.ByName("userID")))
+	quer, err := que.Query(ps.ByName("userID"))
 	if err != nil {
 		w.WriteHeader(500)
-		fmt.Fprintf(w, "{ \"err\": \"%s\", \"userID\": %s, \"code\":1  }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{ \"err\": \"%s\", \"userID\": %s, \"code\":1 }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	firstWs := true
