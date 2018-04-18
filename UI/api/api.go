@@ -7,11 +7,9 @@ import (
 	"strconv"
 	"time"
 	// "encoding/json"
-
 	"log"
 	"net/http"
 	"os"
-	// "strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"
