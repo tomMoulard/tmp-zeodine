@@ -313,8 +313,8 @@ func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, ps httprouter.
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
 
-	// save := ps.ByName("save")
-	save := `{"user_id": 1524134267,"ws_id": 1524134288,"groupes": [{"groupe_id": 12,"cards": [{"card_id": 1,"card": {"card_content": "{}"}},{"card_id": 2,"card": {"card_content": "{}"}},{"card_id": 3,"card": {"card_content": "{}"}},{"card_id": 4,"card": {"card_content": "{}"}}]},{"groupe_id": 21,"cards": [{"card_id": 5,"card": {"card_content": "{\"card_pos\":12}"}}]}]}`
+	save := ps.ByName("save")
+	// save := `{"user_id": 1524134267,"ws_id": 1524134288,"groupes": [{"groupe_id": 12,"cards": [{"card_id": 1,"card": {"card_content": "{}"}},{"card_id": 2,"card": {"card_content": "{}"}},{"card_id": 3,"card": {"card_content": "{}"}},{"card_id": 4,"card": {"card_content": "{}"}}]},{"groupe_id": 21,"cards": [{"card_id": 5,"card": {"card_content": "{\"card_pos\":12}"}}]}]}`
 
 	var saveStruct Save
 
