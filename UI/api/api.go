@@ -26,24 +26,50 @@ type DbManager struct {
 	err        error
 }
 
+func (dbm DbManager) getLastId() uint64 {
+	var res uint64
+	que, err := dbm.db.Prepare("SELECT LAST_INSERT_ID()")
+	if err != nil {
+		log.Printf("[0]Error when getLastID(): %s", err.Error())
+		return 0
+	}
+	defer que.Close()
+
+	quer, err := que.Query()
+	if err != nil {
+		log.Printf("[1]Error when getLastID(): %s", err.Error())
+		return 0
+	}
+
+	for quer.Next() {
+		err = quer.Scan(&res)
+		if err != nil {
+			log.Printf("[2]Error when getLastID(): %s", err.Error())
+			return 0
+		}
+	}
+	return res
+}
+
 // router.GET("/newuser ", dbm.newuser)
 func (dbm DbManager) newuser(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
-	quer, err := dbm.db.Prepare("INSERT INTO zeodine.users VALUES ( ? )")
+	w.WriteHeader(500)
+	quer, err := dbm.db.Prepare("INSERT INTO zeodine.users VALUES ( NULL )")
 	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "{ \"user_id\":-1, \"err\": \"%s\", code:0}", err.Error())
+		fmt.Fprintf(w, "{ \"user_id\":0, \"err\": \"%s\", code:0}", err.Error())
 		return
 	}
 	defer quer.Close()
 
-	userID := time.Now().Unix()
-	_, err = quer.Exec(userID)
+	_, err = quer.Exec()
 	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "{ \"user_id\":-1, \"err\": \"%s\", code:1 }", err.Error())
+		fmt.Fprintf(w, "{ \"user_id\":0, \"err\": \"%s\", code:1 }", err.Error())
 		return
 	}
+
+	userID := dbm.getLastId()
+
 	w.WriteHeader(200)
 	fmt.Fprintf(w, "{\"user_id\":%d}", userID)
 }
@@ -51,16 +77,15 @@ func (dbm DbManager) newuser(w http.ResponseWriter, r *http.Request, _ httproute
 // router.GET("/ws/:userID ", dbm.ws)
 func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
 	que, err := dbm.db.Prepare("SELECT ws_id, ws_name, user_id FROM zeodine.ws WHERE user_id = ?")
 	if err != nil {
-		w.WriteHeader(500)
 		fmt.Fprintf(w, "{ \"err\": \"%s\", \"userID\": %s, \"code\":0 }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	defer que.Close()
 	quer, err := que.Query(ps.ByName("userID"))
 	if err != nil {
-		w.WriteHeader(500)
 		fmt.Fprintf(w, "{ \"err\": \"%s\", \"userID\": %s, \"code\":1 }", err.Error(), ps.ByName("userID"))
 		return
 	}
@@ -91,31 +116,30 @@ func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 // router.GET("/createws/:userID/:wsName ", dbm.createws)
 func (dbm DbManager) createws(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
 	user_id, err := strconv.Atoi(ps.ByName("userID"))
 	wsName := ps.ByName("wsName")
 
 	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "{\"ws_id\": -1, \"err\": \"%s\", \"userID\": %s, \"code\":0 }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{\"ws_id\": 0, \"err\": \"%s\", \"userID\": %s, \"code\":0 }", err.Error(), ps.ByName("userID"))
 		return
 	}
-	//getting ws.lengh
-	nbWS := time.Now().Unix()
 
-	quer, err := dbm.db.Prepare("INSERT INTO zeodine.ws VALUES (?, ?, ?)")
+	quer, err := dbm.db.Prepare("INSERT INTO zeodine.ws VALUES (NULL, ?, ?)")
 	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "{\"ws_id\": -1, \"err\": \"%s\", \"userID\": %s, \"code\":1 }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{\"ws_id\": 0, \"err\": \"%s\", \"userID\": %s, \"code\":1 }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	defer quer.Close()
 
-	_, err = quer.Exec(nbWS, wsName, user_id)
+	_, err = quer.Exec(wsName, user_id)
 	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "{\"ws_id\": -1, \"err\": \"%s\", \"userID\": %s, \"code\":2 }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{\"ws_id\": 0, \"err\": \"%s\", \"userID\": %s, \"code\":2 }", err.Error(), ps.ByName("userID"))
 		return
 	}
+
+	nbWS := dbm.getLastId()
+
 	w.WriteHeader(200)
 	fmt.Fprintf(w, "{\"ws_id\": %d}", nbWS)
 }
@@ -123,19 +147,18 @@ func (dbm DbManager) createws(w http.ResponseWriter, r *http.Request, ps httprou
 // router.GET("/nbcard/:userID/:wsID ", dbm.nbcard)
 func (dbm DbManager) nbcard(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
 
 	que, err := dbm.db.Prepare("SELECT stack_id FROM zeodine.stacks WHERE user_id = ? AND ws_id = ?")
 	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "{\"nb_card\": -1, \"err\": \"%s\", \"userID\": %s, \"code\":0 }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{\"nb_card\": 0, \"err\": \"%s\", \"userID\": %s, \"code\":0 }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	defer que.Close()
 
 	quer, err := que.Query(ps.ByName("userID"), ps.ByName("wsID"))
 	if err != nil {
-		w.WriteHeader(500)
-		fmt.Fprintf(w, "{\"nb_card\": -1, \"err\": \"%s\", \"userID\": %s, \"code\":1 }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{\"nb_card\": 0, \"err\": \"%s\", \"userID\": %s, \"code\":1 }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	nbcard := 0
@@ -143,8 +166,7 @@ func (dbm DbManager) nbcard(w http.ResponseWriter, r *http.Request, ps httproute
 		var stack_id int
 		err = quer.Scan(&stack_id)
 		if err != nil {
-			w.WriteHeader(500)
-			fmt.Fprintf(w, "{\"nb_card\": -1, \"err\": \"%s\", \"userID\": %s, \"code\":2 }", err.Error(), ps.ByName("userID"))
+			fmt.Fprintf(w, "{\"nb_card\": 0, \"err\": \"%s\", \"userID\": %s, \"code\":2 }", err.Error(), ps.ByName("userID"))
 			return
 		}
 		nbcard += 1
@@ -156,10 +178,10 @@ func (dbm DbManager) nbcard(w http.ResponseWriter, r *http.Request, ps httproute
 // router.GET("/load/:userID/:wsID ", dbm.load)
 func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
 	// Query stacks
 	que, err := dbm.db.Prepare("SELECT stack_id FROM zeodine.stacks where user_id = ? AND ws_id =  ?")
 	if err != nil {
-		w.WriteHeader(500)
 		fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":0 }", err.Error(), ps.ByName("userID"))
 		return
 	}
@@ -167,7 +189,6 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, ps httprouter.
 
 	quer, err := dbm.db.Query(ps.ByName("userID"), ps.ByName("wsID"))
 	if err != nil {
-		w.WriteHeader(500)
 		fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":1 }", err.Error(), ps.ByName("userID"))
 		return
 	}
@@ -176,7 +197,6 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, ps httprouter.
 		var stack_id int
 		err = quer.Scan(&stack_id)
 		if err != nil {
-			w.WriteHeader(500)
 			fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":2 }", err.Error(), ps.ByName("userID"))
 			return
 		}
@@ -184,7 +204,6 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, ps httprouter.
 		// Query card
 		que2, err := dbm.db.Prepare("SELECT body FROM zeodine.cards where stack_id = ?")
 		if err != nil {
-			w.WriteHeader(500)
 			fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":3 }", err.Error(), ps.ByName("userID"))
 			return
 		}
@@ -192,7 +211,6 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, ps httprouter.
 
 		quer2, err := dbm.db.Query(stack_id_str)
 		if err != nil {
-			w.WriteHeader(500)
 			fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":4 }", err.Error(), ps.ByName("userID"))
 			return
 		}
@@ -219,10 +237,10 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, ps httprouter.
 // router.GET("/card/:userID/:wsID/:cardID", dbm.card)
 func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
 	// Query stacks
 	que, err := dbm.db.Prepare("SELECT card_id FROM zeodine.stacks where user_id = ? AND ws_id = ?")
 	if err != nil {
-		w.WriteHeader(500)
 		fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":0 }", err.Error(), ps.ByName("userID"))
 		return
 	}
@@ -230,7 +248,6 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.
 
 	quer, err := dbm.db.Query(ps.ByName("userID"), ps.ByName("wsID"))
 	if err != nil {
-		w.WriteHeader(500)
 		fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":1 }", err.Error(), ps.ByName("userID"))
 		return
 	}
@@ -240,7 +257,6 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.
 		var card_id int
 		err = quer.Scan(&card_id)
 		if err != nil {
-			w.WriteHeader(500)
 			fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":2 }", err.Error(), ps.ByName("userID"))
 			return
 		}
@@ -253,14 +269,12 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.
 		// Query card
 		que, err = dbm.db.Prepare("SELECT body FROM zeodine.cards where card_id = ?")
 		if err != nil {
-			w.WriteHeader(500)
 			fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":3 }", err.Error(), ps.ByName("userID"))
 			return
 		}
 		defer que.Close()
 		quer, err = dbm.db.Query(card_id_str)
 		if err != nil {
-			w.WriteHeader(500)
 			fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":4 }", err.Error(), ps.ByName("userID"))
 			return
 		}
@@ -268,7 +282,6 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.
 			var card string
 			err = quer.Scan(&card)
 			if err != nil {
-				w.WriteHeader(500)
 				fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":5 }", err.Error(), ps.ByName("userID"))
 				return
 			}
@@ -276,7 +289,6 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.
 			fmt.Fprintln(w, card)
 		}
 	} else {
-		w.WriteHeader(500)
 		fmt.Fprint(w, "{\"err\": Error: There is no card with this id, \"userID\": %s, \"code\":6 }", ps.ByName("userID"))
 	}
 }
@@ -299,6 +311,7 @@ type Save struct {
 // curl localhost:8080/save/{"user_id": 42,"ws_id": 69,"groupes": [{"groupe_id": 12,"cards": [{"card_id": 1,"card": {"card_content": ""}},{"card_id": 2,"card": {"card_content": ""}},{"card_id": 3,"card": {"card_content": ""}},{"card_id": 4,"card": {"card_content": ""}}]},{"groupe_id": 21,"cards": [{"card_id": 1,"card": {"card_content": ""}}]}]}
 func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
 
 	// save := ps.ByName("save")
 	save := `{"user_id": 1524134267,"ws_id": 1524134288,"groupes": [{"groupe_id": 12,"cards": [{"card_id": 1,"card": {"card_content": "{}"}},{"card_id": 2,"card": {"card_content": "{}"}},{"card_id": 3,"card": {"card_content": "{}"}},{"card_id": 4,"card": {"card_content": "{}"}}]},{"groupe_id": 21,"cards": [{"card_id": 5,"card": {"card_content": "{\"card_pos\":12}"}}]}]}`
@@ -316,7 +329,6 @@ func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, ps httprouter.
 			// query the right stack
 			que, err := dbm.db.Prepare("SELECT stack_id FROM zeodine.stacks WHERE group_id = ? AND user_id = ? AND card_id = ? AND ws_id = ?")
 			if err != nil {
-				w.WriteHeader(500)
 				fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":0}", err.Error())
 				return
 			}
@@ -324,54 +336,66 @@ func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, ps httprouter.
 
 			quer, err := que.Query(group.GroupeID, saveStruct.UserID, card.CardID, saveStruct.WsID)
 			if err != nil {
-				w.WriteHeader(500)
 				fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":1}", err.Error())
 				return
 			}
-			var stack_id int64
-			stack_id = -1
+			var stack_id uint64
+			stack_id = 0
 			for quer.Next() {
 				err := quer.Scan(&stack_id)
 				if err != nil {
-					w.WriteHeader(500)
 					fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":2}", err.Error())
 					return
 				}
 			}
-			var stack_id_new int64
-			if stack_id == -1 {
-				stack_id_new = time.Now().Unix()
-			} else {
-				stack_id_new = stack_id
-			}
-			// log.Printf("group_id: %d, stack_id_new: %d, card_id: %d", group.GroupeID, stack_id_new, card.CardID)
-			// Replacing card || creating card
-			que3, err := dbm.db.Prepare("REPLACE INTO zeodine.cards VALUE (?, ?, ?)")
-			if err != nil {
-				fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":3}", err.Error())
-			}
-			defer que3.Close()
-			_, err = que3.Query(card.CardID, card.Card.CardContent, stack_id_new)
-			if err != nil {
-				fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":4}", err.Error())
-				return
-			}
-			log.Printf("card_id: %d, card_content: %s, stack_id: %d", card.CardID, card.Card.CardContent, stack_id_new)
-			if stack_id == -1 { // Stack does not exist
-				stack_id = time.Now().Unix()
-				que2, err := dbm.db.Prepare("INSERT INTO zeodine.stacks VALUE (?, ?, ?, ?, ?)")
+			if stack_id == 0 {
+				que2, err := dbm.db.Prepare("INSERT INTO zeodine.stacks VALUE (NULL, ?, ?, ?, ?)")
 				if err != nil {
-					w.WriteHeader(500)
-					fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":5}", err.Error())
+					fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":3}", err.Error())
 					return
 				}
 				defer que2.Close()
-				_, err = que2.Query(stack_id, group.GroupeID, saveStruct.UserID, card.CardID, saveStruct.WsID)
+				_, err = que2.Query(group.GroupeID, saveStruct.UserID, card.CardID, saveStruct.WsID)
 				if err != nil {
-					w.WriteHeader(500)
-					fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":6}", err.Error())
+					fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":4}", err.Error())
 					return
 				}
+				stack_id = dbm.getLastId()
+			}
+			// Replacing card || creating card
+			// query the card -> if !exist -> create card
+			que3, err := dbm.db.Prepare("SELECT card_id FROM zeodine.cards where card_id = ? AND body = ?")
+			if err != nil {
+				fmt.Fprintf(w, "{ \"saved\":false, \"err\": \"%s\", code:5}", err.Error())
+				return
+			}
+			defer que3.Close()
+			quer3, err := que3.Query(card.CardID, card.Card.CardContent)
+			if err != nil {
+				fmt.Fprintf(w, "{ \"saved\":false, \"err\": \"%s\", code:6}", err.Error())
+				return
+			}
+			var cardID uint64
+			for quer3.Next() {
+				err = quer3.Scan(&cardID)
+				if err != nil {
+					fmt.Fprintf(w, "{ \"saved\":false, \"err\": \"%s\", code:7}", err.Error())
+					return
+				}
+			}
+			if cardID == 0 { // no card found -> card created
+				que4, err := dbm.db.Prepare("INSERT INTO zeodine.cards value (?, ?, ?)")
+				if err != nil {
+					fmt.Fprintf(w, "{ \"saved\":false, \"err\": \"%s\", code:8}", err.Error())
+					return
+				}
+				defer que4.Close()
+				_, err = que4.Query(card.CardID, card.Card.CardContent, stack_id)
+				if err != nil {
+					fmt.Fprintf(w, "{ \"saved\":false, \"err\": \"%s\", code:9}", err.Error())
+					return
+				}
+				//else crad created !
 			}
 		}
 	}
@@ -422,16 +446,16 @@ func (dbm DbManager) setupDB() DbManager {
 	log.Println("Connected")
 
 	// Creating a new CARDS table
-	dbm.createTable("zeodine.cards", "card_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, body JSON DEFAULT NULL, stack_id INT DEFAULT NULL")
+	dbm.createTable("zeodine.cards", "card_id INT(32) NOT NULL AUTO_INCREMENT PRIMARY KEY, body JSON DEFAULT NULL, stack_id INT(32) DEFAULT NULL")
 
 	// Creating a new USERS table
-	dbm.createTable("zeodine.users", "user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY")
+	dbm.createTable("zeodine.users", "user_id INT(32) NOT NULL AUTO_INCREMENT PRIMARY KEY")
 
 	// Creating a new WS table
-	dbm.createTable("zeodine.ws", "ws_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,ws_name VARCHAR(64) DEFAULT NULL,user_id INT DEFAULT NULL,FOREIGN KEY user_id(user_id) REFERENCES users(user_id)")
+	dbm.createTable("zeodine.ws", "ws_id INT(32) NOT NULL AUTO_INCREMENT PRIMARY KEY,ws_name VARCHAR(64) DEFAULT NULL,user_id INT(32) DEFAULT NULL,FOREIGN KEY user_id(user_id) REFERENCES users(user_id)")
 
 	// Creating a new WS table
-	dbm.createTable("zeodine.stacks", "stack_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, group_id INT DEFAULT NULL, user_id INT DEFAULT NULL, card_id INT DEFAULT NULL, ws_id INT DEFAULT NULL, FOREIGN KEY user_id(user_id) REFERENCES users(user_id), FOREIGN KEY ws_id(ws_id) REFERENCES ws(ws_id)")
+	dbm.createTable("zeodine.stacks", "stack_id INT(32) NOT NULL AUTO_INCREMENT PRIMARY KEY, group_id INT(32) DEFAULT NULL, user_id INT(32) DEFAULT NULL, card_id INT(32) DEFAULT NULL, ws_id INT(32) DEFAULT NULL, FOREIGN KEY user_id(user_id) REFERENCES users(user_id), FOREIGN KEY ws_id(ws_id) REFERENCES ws(ws_id)")
 
 	var jsonS jsonManage
 	// //Parsing global cards
