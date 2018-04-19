@@ -10,37 +10,38 @@ var bottomCards;
 
 function preload() {
 
-    h                  = windowHeight;
-    w                  = windowWidth;
-    cards              = []; //Personal cards
-    loadedCards        = []; //all cards provided
-    bottomCards        = []; //cards at the bottom of the page
+    h = windowHeight;
+    w = windowWidth;
+    cards = []; //Personal cards
+    loadedCards = []; //all cards provided
+    bottomCards = []; //cards at the bottom of the page
     mouseIsPressedHere = false;
-    nbCards            = floor(w / 100); // max card in a row
-    nbCardsMax         = 5; //total cards provided
+    nbCards = floor(w / 100); // max card in a row
+    nbCardsMax = 5; //total cards provided
     // TODO: get this from the api
-    // nbCardsMax = loadJSON("http://147.135.194.248/nbcards/")
-    cardPos            = 0; //Bottom first card
-    timeToSave         = 0; //timer to save cards
-    
+    // nbCardsMax = loadJSON("http://147.135.194.248/nbcards/5/1523982071")
+    cardPos = 0; //Bottom first card
+    timeToSave = 0; //timer to save cards
+
     for (var i = 0; i < nbCardsMax; i++) {
-        var url = "http://localhost:8080/card/" + i;
-        
+        var url = "http://147.135.194.248:8081/card/" + i;
+
         var json = loadJSON(url, createCard)
     }
 }
 
 function setup() {
-    createCanvas(w,h);
+    console.log(userid)
+    createCanvas(w, h);
     buildBottomCards()
 }
 
 function createCard(json) {
     var posX = map(json.id, 0, w, 0, nbCards);
     var newCard = new Card(posX,
-            h - 185,
-            json.img,
-            json.text);
+        h - 185,
+        json.img,
+        json.text);
     append(loadedCards, newCard);
 }
 
@@ -48,26 +49,18 @@ function draw() {
     background(51);
     // Showing all cards
     for (var i = 0; i < cards.length; i++) {
-        cards[i].display();
+        cards[i].display([0, 0, 0]);
     }
     for (var i = 0; i < bottomCards.length; i++) {
-        bottomCards[i].display();
+        bottomCards[i].display([0, 0, 0]);
     }
     if (mouseIsPressedHere) {
-        cards[thisCardsID].x = mouseX;
-        cards[thisCardsID].y = mouseY;
-        if (cards[thisCardsID].id != undefined) {
-            cards[thisCardsID].update(mouseY)
-        }
-        // var tmpPos = isCard(mouseX, mouseY, cards)
-        // if (tmpPos != -1){
-        //     //there is a card below the one you are draging
-        // }
+        cards[thisCardsID[0]].move(mouseX, mouseY, thisCardsID[1]);
     }
-    if (timeToSave > 1000) {        // var req1 = new XMLHttpRequest();
-    	// req1.open("GET",url,true);
-    	// req1.addEventListener("load",createCard);
-    	// req1.addEventListener("error",erreur);
+    if (timeToSave > 1000) { // var req1 = new XMLHttpRequest();
+        // req1.open("GET",url,true);
+        // req1.addEventListener("load",createCard);
+        // req1.addEventListener("error",erreur);
         // req1.send(null);
         var res = [];
         for (var i = 0; i < cards.length; i++) {
@@ -81,37 +74,21 @@ function draw() {
     timeToSave += 1;
 }
 
-function fusionCard(card1,card2) {
-    if (card1.id != undefined && card2.id != undefined) {
-        var grFus = new Group(0,card1,card2);
-        cards.splice(cards.indexOf(card1), 1);
-        cards.splice(cards.indexOf(card2), 1);
-        append(cards,gr);
-        mouseIsPressedHere = false;
-    } else if (card1.id == undefined && card2.id == undefined) {
-        var gr = new Group(0,card1,card2);
-        cards.splice(cards.indexOf(card1), 1);
-        cards.splice(cards.indexOf(card2), 1);
-        append(cards,gr);
-        mouseIsPressedHere = false;
-    } else if (card1.id != undefined) {
-        card1.appendCard(card2)
-        cards.splice(cards.indexOf(card2), 1);
-        mouseIsPressedHere = false;
-    } else if (card2.id != undefined) {
-        card2.appendCard(card1)
-        cards.splice(cards.indexOf(card1), 1);
-        mouseIsPressedHere = false;
-    }
-
+function fusionCard(card1, card2) {
+    var gr = new Group(0, card1);
+    gr.appendCard(card2)
+    cards.splice(cards.indexOf(card1), 1);
+    cards.splice(cards.indexOf(card2), 1);
+    append(cards, gr);
+    mouseIsPressedHere = false;
 }
 
 function cardClose() {
     for (var i = 0; i < cards.length; i++) {
-        for (var j = i+1; j < cards.length; j++) {
-            if (Math.abs(cards[i].x-cards[j].x)<20 &&
-                Math.abs(cards[i].y-cards[j].y)<20) {
-                    fusionCard(cards[i],cards[j])                    
+        for (var j = i + 1; j < cards.length; j++) {
+            if (Math.abs(cards[i].x - cards[j].x) < 20 &&
+                Math.abs(cards[i].y - cards[j].y) < 20) {
+                fusionCard(cards[i], cards[j])
             }
         }
     }
@@ -120,22 +97,20 @@ function cardClose() {
 function mousePressed() {
     if (mouseX < w && mouseY < h - 245) {
         cardID = isCard(mouseX, mouseY, cards);
-        if (cardID == -1) {
-            // var newCard = new Card(mouseX,
-            //                        mouseY,
-            //                        "maxresdefault.jpg",
-            //                        "CardID:" + cards.length);
-            // append(cards, newCard);
-        } else {
+        if (mouseButton === RIGHT && cardID[1] != -1) { // si on fait un click doit sur un groupe
+            cards[thisCardsID[0]].removeCard(thisCardsID[1]);
+            return;
+        }
+        if (cardID[0] != -1) { //Si il y a une carte ou un groupe à deplacer avec la sourie
             mouseIsPressedHere = true;
-            thisCardsID        = cardID;
+            thisCardsID = cardID;
         }
     } else if (mouseX < w && mouseY < h) {
         cardID = isCard(mouseX, mouseY, bottomCards);
         var tmpCard = new Card(w / 2,
-                               h / 2,
-                               bottomCards[cardID].imgURL,
-                               bottomCards[cardID].desc)
+            h / 2,
+            bottomCards[cardID[0]].imgURL,
+            bottomCards[cardID[0]].desc)
         append(cards, tmpCard);
     }
 }
@@ -156,17 +131,14 @@ function keyPressed() {
 }
 
 function isCard(x, y, list) {
-    // console.log("Checking if (" + x + "," + y + ") is inside a card")
-    //  console.log(list)
-
+    var res = [false, -1];
     for (var i = 0; i < list.length; i++) {
-        if (x > list[i].x - (list[i].w/2) &&
-            x < list[i].x + (list[i].w/2) &&
-            y > list[i].y - (list[i].h/2) &&
-            y < list[i].y + (list[i].h/2))
-            return i;
+        res = list[i].check(x, y);
+        if (res[0]) {
+            return [i, res[1]]
+        }
     }
-    return -1;
+    return [-1, -1];
 }
 
 
@@ -177,9 +149,9 @@ function buildBottomCards() {
         var posX = map(i, 0, nbCards, 80, w + 20);
 
         var tmpCard = new Card(posX,
-                               h - 155,
-                               loadedCards[cardPos].imgURL,
-                               loadedCards[cardPos].desc);
+            h - 155,
+            loadedCards[cardPos].imgURL,
+            loadedCards[cardPos].desc);
         append(bottomCards, tmpCard);
         cardPos += 1;
     }
