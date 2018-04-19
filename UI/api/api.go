@@ -4,12 +4,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"strconv"
-	"time"
-	// "encoding/json"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/julienschmidt/httprouter"
@@ -282,9 +281,103 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, ps httprouter.
 	}
 }
 
-// router.GET("/save/:json", dbm.save)
+type Save struct {
+	Groupes []struct {
+		Cards []struct {
+			Card struct {
+				CardContent string `json:"card_content"`
+			} `json:"card"`
+			CardID int `json:"card_id"`
+		} `json:"cards"`
+		GroupeID int `json:"groupe_id"`
+	} `json:"groupes"`
+	UserID int `json:"user_id"`
+	WsID   int `json:"ws_id"`
+}
+
+// router.GET("/save/:save", dbm.save)
+// curl localhost:8080/save/{"user_id": 42,"ws_id": 69,"groupes": [{"groupe_id": 12,"cards": [{"card_id": 1,"card": {"card_content": ""}},{"card_id": 2,"card": {"card_content": ""}},{"card_id": 3,"card": {"card_content": ""}},{"card_id": 4,"card": {"card_content": ""}}]},{"groupe_id": 21,"cards": [{"card_id": 1,"card": {"card_content": ""}}]}]}
 func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
+
+	// save := ps.ByName("save")
+	save := `{"user_id": 1524134267,"ws_id": 1524134288,"groupes": [{"groupe_id": 12,"cards": [{"card_id": 1,"card": {"card_content": "{}"}},{"card_id": 2,"card": {"card_content": "{}"}},{"card_id": 3,"card": {"card_content": "{}"}},{"card_id": 4,"card": {"card_content": "{}"}}]},{"groupe_id": 21,"cards": [{"card_id": 5,"card": {"card_content": "{\"card_pos\":12}"}}]}]}`
+
+	var saveStruct Save
+
+	json.Unmarshal([]byte(save), &saveStruct)
+	// Foreach group
+	//      add the stack
+	//      replace all cards with right the stack id
+	for _, group := range saveStruct.Groupes {
+		// For all cards
+		for _, card := range group.Cards {
+			time.Sleep(1 * time.Second) // Remove a bug when generating new id
+			// query the right stack
+			que, err := dbm.db.Prepare("SELECT stack_id FROM zeodine.stacks WHERE group_id = ? AND user_id = ? AND card_id = ? AND ws_id = ?")
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":0}", err.Error())
+				return
+			}
+			defer que.Close()
+
+			quer, err := que.Query(group.GroupeID, saveStruct.UserID, card.CardID, saveStruct.WsID)
+			if err != nil {
+				w.WriteHeader(500)
+				fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":1}", err.Error())
+				return
+			}
+			var stack_id int64
+			stack_id = -1
+			for quer.Next() {
+				err := quer.Scan(&stack_id)
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":2}", err.Error())
+					return
+				}
+			}
+			var stack_id_new int64
+			if stack_id == -1 {
+				stack_id_new = time.Now().Unix()
+			} else {
+				stack_id_new = stack_id
+			}
+			// log.Printf("group_id: %d, stack_id_new: %d, card_id: %d", group.GroupeID, stack_id_new, card.CardID)
+			// Replacing card || creating card
+			que3, err := dbm.db.Prepare("REPLACE INTO zeodine.cards VALUE (?, ?, ?)")
+			if err != nil {
+				fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":3}", err.Error())
+			}
+			defer que3.Close()
+			_, err = que3.Query(card.CardID, card.Card.CardContent, stack_id_new)
+			if err != nil {
+				fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":4}", err.Error())
+				return
+			}
+			log.Printf("card_id: %d, card_content: %s, stack_id: %d", card.CardID, card.Card.CardContent, stack_id_new)
+			if stack_id == -1 { // Stack does not exist
+				stack_id = time.Now().Unix()
+				que2, err := dbm.db.Prepare("INSERT INTO zeodine.stacks VALUE (?, ?, ?, ?, ?)")
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":5}", err.Error())
+					return
+				}
+				defer que2.Close()
+				_, err = que2.Query(stack_id, group.GroupeID, saveStruct.UserID, card.CardID, saveStruct.WsID)
+				if err != nil {
+					w.WriteHeader(500)
+					fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":6}", err.Error())
+					return
+				}
+			}
+		}
+	}
+	w.WriteHeader(200)
+	fmt.Fprintln(w, "{\"saved\": true}")
+
 }
 
 func (dbm DbManager) createTable(tableName, tableContent string) {
@@ -338,7 +431,7 @@ func (dbm DbManager) setupDB() DbManager {
 	dbm.createTable("zeodine.ws", "ws_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,ws_name VARCHAR(64) DEFAULT NULL,user_id INT DEFAULT NULL,FOREIGN KEY user_id(user_id) REFERENCES users(user_id)")
 
 	// Creating a new WS table
-	dbm.createTable("zeodine.stacks", "stack_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,group_id INT DEFAULT NULL,user_id INT DEFAULT NULL,card_id INT DEFAULT NULL,ws_id INT DEFAULT NULL,FOREIGN KEY user_id(user_id) REFERENCES users(user_id),FOREIGN KEY card_id(card_id) REFERENCES cards(card_id),FOREIGN KEY ws_id(ws_id) REFERENCES ws(ws_id)")
+	dbm.createTable("zeodine.stacks", "stack_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, group_id INT DEFAULT NULL, user_id INT DEFAULT NULL, card_id INT DEFAULT NULL, ws_id INT DEFAULT NULL, FOREIGN KEY user_id(user_id) REFERENCES users(user_id), FOREIGN KEY ws_id(ws_id) REFERENCES ws(ws_id)")
 
 	var jsonS jsonManage
 	// //Parsing global cards
@@ -372,12 +465,12 @@ func (dbm DbManager) setupDB() DbManager {
 
 	// Query
 	// for i := 1; i < 6; i++ {
-	// 	// j := strconv.Itoa(i)
-	// 	// _, err = quer.Exec(i, jsonS.data.(map[string]interface{})["card"+j])
-	// 	_, err = quer.Exec(i, "{card:42}")
-	// 	if err != nil {
-	// 		log.Println(err)
-	// 	}
+	//  // j := strconv.Itoa(i)
+	//  // _, err = quer.Exec(i, jsonS.data.(map[string]interface{})["card"+j])
+	//  _, err = quer.Exec(i, "{card:42}")
+	//  if err != nil {
+	//      log.Println(err)
+	//  }
 	// }
 
 	return dbm
@@ -399,6 +492,6 @@ func main() {
 	router.GET("/nbcard/:userID/:wsID", dbm.nbcard)
 	router.GET("/load/:userID/:wsID", dbm.load)
 	router.GET("/card/:userID/:wsID/:cardID", dbm.card)
-	router.GET("/save/:json", dbm.save)
+	router.GET("/save/:save", dbm.save)
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
