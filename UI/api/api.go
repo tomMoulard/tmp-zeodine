@@ -182,14 +182,14 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, ps httprouter.
 	// Query stacks
 	que, err := dbm.db.Prepare("SELECT stack_id FROM zeodine.stacks where user_id = ? AND ws_id =  ?")
 	if err != nil {
-		fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":0 }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":0 }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	defer que.Close()
 
-	quer, err := dbm.db.Query(ps.ByName("userID"), ps.ByName("wsID"))
+	quer, err := que.Query(ps.ByName("userID"), ps.ByName("wsID"))
 	if err != nil {
-		fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":1 }", err.Error(), ps.ByName("userID"))
+		fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":1 }", err.Error(), ps.ByName("userID"))
 		return
 	}
 	res := "{ \"cards\": ["
@@ -197,21 +197,21 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, ps httprouter.
 		var stack_id int
 		err = quer.Scan(&stack_id)
 		if err != nil {
-			fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":2 }", err.Error(), ps.ByName("userID"))
+			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":2 }", err.Error(), ps.ByName("userID"))
 			return
 		}
 		stack_id_str := strconv.Itoa(stack_id)
 		// Query card
 		que2, err := dbm.db.Prepare("SELECT body FROM zeodine.cards where stack_id = ?")
 		if err != nil {
-			fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":3 }", err.Error(), ps.ByName("userID"))
+			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":3 }", err.Error(), ps.ByName("userID"))
 			return
 		}
 		defer que2.Close()
 
 		quer2, err := dbm.db.Query(stack_id_str)
 		if err != nil {
-			fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":4 }", err.Error(), ps.ByName("userID"))
+			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %s, \"code\":4 }", err.Error(), ps.ByName("userID"))
 			return
 		}
 		firstCard := true
