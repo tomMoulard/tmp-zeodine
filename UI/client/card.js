@@ -31,6 +31,10 @@ function Card(x, y, imgURL, desc) {
             this.h)
     }
 
+    this.removeCard = function(index) {
+        cards.splice(cards.indexOf(this), 1);
+    }
+
     this.check = function(xmouse, ymouse) {
         if (xmouse > this.x - (this.w / 2) &&
             xmouse < this.x + (this.w / 2) &&
