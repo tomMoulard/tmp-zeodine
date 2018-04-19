@@ -87,19 +87,20 @@ func (dbm DbManager) ws(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 	var Ws WsStruct
 	err := decoder.Decode(&Ws)
 	if err != nil {
-		panic(err)
+		fmt.Fprintf(w, "{ \"err\": \"%s\", \"userID\": %d, \"code\":0 }", err.Error(), Ws.UserID)
+		return
 	}
 	defer r.Body.Close()
 
 	que, err := dbm.db.Prepare("SELECT ws_id, ws_name, user_id FROM zeodine.ws WHERE user_id = ?")
 	if err != nil {
-		fmt.Fprintf(w, "{ \"err\": \"%s\", \"userID\": %d, \"code\":0 }", err.Error(), Ws.UserID)
+		fmt.Fprintf(w, "{ \"err\": \"%s\", \"userID\": %d, \"code\":1 }", err.Error(), Ws.UserID)
 		return
 	}
 	defer que.Close()
 	quer, err := que.Query(Ws.UserID)
 	if err != nil {
-		fmt.Fprintf(w, "{ \"err\": \"%s\", \"userID\": %d, \"code\":1 }", err.Error(), Ws.UserID)
+		fmt.Fprintf(w, "{ \"err\": \"%s\", \"userID\": %d, \"code\":2 }", err.Error(), Ws.UserID)
 		return
 	}
 	firstWs := true
