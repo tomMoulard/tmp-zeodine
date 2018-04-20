@@ -36,7 +36,7 @@ function createNewWorkspace(ev) {
     }
     errTxt.innerHTML = "";
     resReq = loadJSON("http://147.135.194.248:8081/createws/" + userid + "/" + txt.value);
+    txt.value = ""
 
-    console.log(resReq);
     location.reload();
-}
+};

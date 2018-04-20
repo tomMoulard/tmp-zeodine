@@ -11,7 +11,7 @@ function Workspaces(id, name) {
     var card3 = document.createElement("div");
     var card4 = document.createElement("div");
 
-    aElm.setAttribute('href', "/use/" + this.id);
+    aElm.setAttribute('href', "/workspace/" + userid + "/" + this.id);
 
     this.elm.appendChild(aElm);
     divVue.appendChild(card1);

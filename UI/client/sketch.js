@@ -33,7 +33,7 @@ function preload() {
 }
 
 function setup() {
-    console.log(userid)
+    console.log(userid, wsid)
     createCanvas(w, h);
     buildBottomCards()
 }
