@@ -7,6 +7,7 @@ var nbCardsMax;
 var cardPos;
 var timeToSave;
 var bottomCards;
+var ws;
 
 function preload() {
 
@@ -19,13 +20,12 @@ function preload() {
     nbCards = floor(w / 100); // max card in a row
     nbCardsMax = 5; //total cards provided
     // TODO: get this from the api
-    // nbCardsMax = loadJSON("http://147.135.194.248/nbcards/5/1523982071")
+    // nbCardsMax = loadJSON("http://147.135.194.248:8081/nbcard/1524134993/1524135042")
     cardPos = 0; //Bottom first card
     timeToSave = 0; //timer to save cards
 
     for (var i = 0; i < nbCardsMax; i++) {
         var url = "http://147.135.194.248:8081/card/" + i;
-
         var json = loadJSON(url, createCard)
     }
 }
@@ -36,13 +36,14 @@ function setup() {
     buildBottomCards()
 }
 
-function createCard(json) {
-    var posX = map(json.id, 0, w, 0, nbCards);
-    var newCard = new Card(posX,
-        h - 185,
-        json.img,
-        json.text);
-    append(loadedCards, newCard);
+
+function windowResized() {
+    resizeCanvas(windowWidth, windowHeight);
+    h = windowHeight;
+    w = windowWidth;
+    bottomCards = [];
+    nbCards = floor(w / 100);
+    buildBottomCards();
 }
 
 function draw() {
@@ -62,6 +63,8 @@ function draw() {
         // req1.addEventListener("load",createCard);
         // req1.addEventListener("error",erreur);
         // req1.send(null);
+
+        `{"user_id": 1,"ws_id": 1,"groupes": [{"groupe_id": 12,"cards": [{"card_id": 1,"card": {"card_content": "{}"}},{"card_id": 2,"card": {"card_content": "{}"}},{"card_id": 3,"card": {"card_content": "{}"}},{"card_id": 4,"card": {"card_content": "{}"}}]},{"groupe_id": 21,"cards": [{"card_id": 5,"card": {"card_content": "{\"card_pos\":12}"}}]}]}`
         var res = [];
         for (var i = 0; i < cards.length; i++) {
             append(res, cards[i].save());
@@ -74,13 +77,13 @@ function draw() {
     timeToSave += 1;
 }
 
-function fusionCard(card1, card2) {
-    var gr = new Group(0, card1);
-    gr.appendCard(card2)
-    cards.splice(cards.indexOf(card1), 1);
-    cards.splice(cards.indexOf(card2), 1);
-    append(cards, gr);
-    mouseIsPressedHere = false;
+function createCard(json) {
+    var posX = map(json.id, 0, w, 0, nbCards);
+    var newCard = new Card(posX,
+        h - 185,
+        json.img,
+        json.text);
+    append(loadedCards, newCard);
 }
 
 function cardClose() {
@@ -94,16 +97,25 @@ function cardClose() {
     }
 }
 
+function fusionCard(card1, card2) {
+    var gr = new Group(0, card1);
+    gr.appendCard(card2)
+    cards.splice(cards.indexOf(card1), 1);
+    cards.splice(cards.indexOf(card2), 1);
+    append(cards, gr);
+    mouseIsPressedHere = false;
+}
+
 function mousePressed() {
     if (mouseX < w && mouseY < h - 245) {
         cardID = isCard(mouseX, mouseY, cards);
-        if (mouseButton === RIGHT && cardID[1] != -1) { // si on fait un click doit sur un groupe
-            cards[thisCardsID[0]].removeCard(thisCardsID[1]);
-            return;
-        }
-        if (cardID[0] != -1) { //Si il y a une carte ou un groupe à deplacer avec la sourie
-            mouseIsPressedHere = true;
-            thisCardsID = cardID;
+        if (cardID[0] != -1) { //Si il y a une carte ou un groupe selectionner par la sourie
+            if (mouseButton === RIGHT) { // si on fait un click doit sur une carte
+                cards[cardID[0]].removeCard(cardID[1]);
+            } else {
+                mouseIsPressedHere = true;
+                thisCardsID = cardID;
+            }
         }
     } else if (mouseX < w && mouseY < h) {
         cardID = isCard(mouseX, mouseY, bottomCards);
@@ -140,8 +152,6 @@ function isCard(x, y, list) {
     }
     return [-1, -1];
 }
-
-
 
 function buildBottomCards() {
     for (var i = 0; i < nbCards; i++) {
