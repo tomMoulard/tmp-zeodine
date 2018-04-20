@@ -232,7 +232,7 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	defer r.Body.Close()
 
 	// Query stacks
-	que, err := dbm.db.Prepare("SELECT stack_id FROM zeodine.stacks where user_id = ? AND ws_id =  ?")
+	que, err := dbm.db.Prepare("SELECT card_id FROM zeodine.stacks where user_id = ? AND ws_id =  ?")
 	if err != nil {
 		fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":1 }", err.Error(), Loaded.UserID)
 		return
@@ -246,21 +246,24 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	}
 	res := "{ \"cards\": ["
 	for quer.Next() {
-		var stack_id uint64
-		err = quer.Scan(&stack_id)
+		var card_id uint64
+		err = quer.Scan(&card_id)
 		if err != nil {
 			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":3 }", err.Error(), Loaded.UserID)
 			return
 		}
 		// Query card
-		que2, err := dbm.db.Prepare("SELECT body FROM zeodine.cards where stack_id = ?")
+		que2, err := dbm.db.Prepare("SELECT body FROM zeodine.cards where card_id = ?")
 		if err != nil {
 			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":4 }", err.Error(), Loaded.UserID)
 			return
 		}
 		defer que2.Close()
 
-		quer2, err := dbm.db.Query(strconv.Itoa(int(stack_id)))
+		log.Println("card_id:", card_id)
+
+		// quer2, err := dbm.db.Query(strconv.Itoa(int(card_id)))
+		quer2, err := que2.Query(card_id)
 		if err != nil {
 			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5 }", err.Error(), Loaded.UserID)
 			return
@@ -431,16 +434,17 @@ func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, _ httprouter.P
 					return
 				}
 				stack_id = dbm.getLastId()
+				log.Println("New stack_id:", stack_id)
 			}
 			// Replacing card || creating card
 			// query the card -> if !exist -> create card
-			que3, err := dbm.db.Prepare("SELECT card_id FROM zeodine.cards where card_id = ? AND body = ?")
+			que3, err := dbm.db.Prepare("SELECT card_id FROM zeodine.cards where card_id = ?")
 			if err != nil {
 				fmt.Fprintf(w, "{ \"saved\":false, \"err\": \"%s\", \"code\":6}", err.Error())
 				return
 			}
 			defer que3.Close()
-			quer3, err := que3.Query(card.CardID, card.Card.CardContent)
+			quer3, err := que3.Query(card.CardID)
 			if err != nil {
 				fmt.Fprintf(w, "{ \"saved\":false, \"err\": \"%s\", \"code\":7}", err.Error())
 				return
@@ -465,8 +469,10 @@ func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, _ httprouter.P
 					fmt.Fprintf(w, "{ \"saved\":false, \"err\": \"%s\", \"code\":10}", err.Error())
 					return
 				}
-				//else crad created !
+
+				//else card created !
 			}
+			log.Println("stack:", stack_id, "card:", card)
 		}
 	}
 	w.WriteHeader(200)
