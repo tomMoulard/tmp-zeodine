@@ -3,6 +3,7 @@ body {
     padding: 0;
     font-family: "Helvetica Neue", "Helvetica", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", "ＭＳ Ｐゴシック", arial, sans-serif;
     font-size: 12px;
+    background-color: #f7f7f7;
     color: rgb(33, 25, 34)
 }
 
@@ -11,9 +12,61 @@ a {
     text-decoration: none;
 }
 
-div {
-    display: flex;
-    box-sizing: border-box;
-    align-items: center;
+div.ws:hover,
+#createNewWs:hover {
+    background-color: #ebe8e8;
+}
+
+div.cardInfo {
+    position: fixed;
+    background: #f7f7f7;
+    left: 50%;
+    top: 10%;
+    width: 33%;
+    height: 66%;
+    border: double;
+}
+
+div.container div {
+    height: 100px;
+    width: 100px;
+    background: #646464;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    margin: 1px;
+    display: inline-block;
+}
+
+div.ws,
+#createNewWs {
+    padding: 12px;
+    width: 204px;
+    margin: 10px;
+    display: inline-block;
     font-weight: 700;
+}
+
+#createNewWs div:first-child {
+    width: 100%;
+}
+
+div.ws:hover,
+#createNewWs:hover {
+    background-color: #ebe8e8;
+}
+
+#newName {
+    width: 95%;
+}
+
+#NEW {
+    background: lightgreen;
+    height: 200px;
+    width: 200px;
+}
+
+.title {
+    font-size: 18px;
 }
