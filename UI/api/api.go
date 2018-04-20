@@ -260,8 +260,6 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		}
 		defer que2.Close()
 
-		log.Println("card_id:", card_id)
-
 		// quer2, err := dbm.db.Query(strconv.Itoa(int(card_id)))
 		quer2, err := que2.Query(card_id)
 		if err != nil {
@@ -281,7 +279,7 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, _ httprouter.P
 				// res += "{\"err\": \"" + err.Error() + "\", \"userID\": " + Loaded.UserID + ", \"code\":6 }"
 				res += fmt.Sprintf("\"err\": \"%s\", \"userID\": %d, \"code\": %d", err.Error(), Loaded.UserID, 6)
 			} else {
-				res += card
+				res += fmt.Sprintf("{\"card_id\":%d, \"card_content\":%s}", card_id, card)
 			}
 		}
 	}
@@ -434,7 +432,6 @@ func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, _ httprouter.P
 					return
 				}
 				stack_id = dbm.getLastId()
-				log.Println("New stack_id:", stack_id)
 			}
 			// Replacing card || creating card
 			// query the card -> if !exist -> create card
@@ -472,7 +469,6 @@ func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, _ httprouter.P
 
 				//else card created !
 			}
-			log.Println("stack:", stack_id, "card:", card)
 		}
 	}
 	w.WriteHeader(200)
