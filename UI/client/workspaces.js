@@ -21,25 +21,11 @@ function Workspaces(id, name) {
     aElm.appendChild(divVue);
     aElm.appendChild(text);
 
+    this.elm.className = "ws";
+    this.elm.id = this.id;
+    text.className = "title";
+
     divVue.className = "container"
-    divVue.style.width = "202px";
-    divVue.style.height = "202px";
-
-    card1.style.width = "100px";
-    card1.style.height = "100px";
-    card1.style.background = "rgb(239, 239, 239)";
-
-    card2.style.width = "100px";
-    card2.style.height = "100px";
-    card2.style.background = "rgb(239, 239, 239)";
-
-    card3.style.width = "100px";
-    card3.style.height = "100px";
-    card3.style.background = "rgb(239, 239, 239)";
-
-    card4.style.width = "100px";
-    card4.style.height = "100px";
-    card4.style.background = "rgb(239, 239, 239)";
 
     text.innerHTML = this.name;
 }

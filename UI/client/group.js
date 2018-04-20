@@ -3,6 +3,10 @@ function Group(id, card1) {
     this.x = card1.x;
     this.y = card1.y;
     this.theCards = [];
+    this.div = document.createElement("div");
+    this.div.className = "cardInfo"
+
+
     if (card1.theCards != undefined) {
         for (var i = 0; i < card1.theCards.length; i++) {
             append(this.theCards, card1.theCards[i]);
@@ -22,6 +26,31 @@ function Group(id, card1) {
             }
             this.theCards[i].display(this.color)
         }
+    }
+
+    this.globalView = function(index, color) {
+        var min_wh = Math.min(w, h);
+        stroke(this.color[0], this.color[1], this.color[2]);
+        strokeWeight(10);
+        rectMode(CORNER)
+        rect((min_wh / 10), (min_wh / 10), min_wh / 3, (2 * min_wh) / 3);
+        image(this.theCards[index].img, //imgurl
+                (min_wh / 10) + 4, // x pos
+                (min_wh / 10) + 4, // y pos
+                min_wh / 3 - 8, //width of the pict
+                min_wh / 3 - 8) // height of the pict
+        noStroke();
+        text(this.theCards[index].desc, // text to display
+            (min_wh / 10) + 4, // x pos
+            (min_wh / 10) + min_wh / 3, // y pos
+            min_wh / 3,
+            min_wh)
+
+        document.body.appendChild(this.div)
+    }
+
+    this.rmvChild = function() {
+        document.body.removeChild(this.div)
     }
 
     this.removeCard = function(index) {

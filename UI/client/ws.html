@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr" lang="fr">
 
-<html>
-
 <head>
-    <script type="text/javascript">var userid = {{.user}};</script>
+	<script type="text/javascript">var userid = {{.user}};</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.0/addons/p5.dom.js"></script>
     <script src="../sketch_ws.js"></script>
@@ -12,6 +10,18 @@
     <link href="../base.css" type="text/css" rel="stylesheet" />
 </head>
 
-<body style="margin:0" oncontextmenu="return false;"></body>
+<body style="margin:0" oncontextmenu="return false;">
+    <div id="top"></div>
+    <div id="middle">
+        <div id="createNewWs" class="container">
+		<div id="NEW">
+			<p>Create a new workspace</p>
+			<p id="textErrorName"></p>
+		</div>
+		<input type="text" id="newName">
+        </div>
+    </div>
+    <div id="bottom"></div>
+</body>
 
 </html>
