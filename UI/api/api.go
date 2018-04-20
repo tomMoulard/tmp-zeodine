@@ -245,6 +245,7 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		return
 	}
 	res := "{ \"cards\": ["
+	firstCard := true
 	for quer.Next() {
 		var card_id uint64
 		err = quer.Scan(&card_id)
@@ -266,7 +267,6 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, _ httprouter.P
 			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5 }", err.Error(), Loaded.UserID)
 			return
 		}
-		firstCard := true
 		for quer2.Next() {
 			if firstCard {
 				firstCard = false
