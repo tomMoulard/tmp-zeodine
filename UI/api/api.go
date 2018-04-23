@@ -57,14 +57,14 @@ func (dbm DbManager) newuser(w http.ResponseWriter, r *http.Request, _ httproute
 	w.WriteHeader(500)
 	quer, err := dbm.db.Prepare("INSERT INTO zeodine.users VALUES ( NULL )")
 	if err != nil {
-		fmt.Fprintf(w, "{ \"user_id\":0, \"err\": \"%s\", code:0}", err.Error())
+		fmt.Fprintf(w, "{ \"user_id\":0, \"err\": \"%s\", \"code\":0}", err.Error())
 		return
 	}
 	defer quer.Close()
 
 	_, err = quer.Exec()
 	if err != nil {
-		fmt.Fprintf(w, "{ \"user_id\":0, \"err\": \"%s\", code:1 }", err.Error())
+		fmt.Fprintf(w, "{ \"user_id\":0, \"err\": \"%s\", \"code\":1 }", err.Error())
 		return
 	}
 
@@ -572,15 +572,15 @@ func (dbm DbManager) setupDB() DbManager {
 	return dbm
 }
 
-// fespfsepslpselpsfpl
-// feoijseiojsfeoisf
+
+// ExecuteAPI Execute the api with the bdd
 func ExecuteAPI(r *httprouter.Router) {
 	// var jsonS jsonManage
 	var dbm DbManager
 
 	dbm = dbm.setupDB()
 
-	defer dbm.db.Close()
+	//defer dbm.db.Close()
 
 	// r = httprouter.New()
 
@@ -593,4 +593,5 @@ func ExecuteAPI(r *httprouter.Router) {
 	r.POST("/save", dbm.save)
 	//log.Fatal(http.ListenAndServe(":8080", r))
 }
+
 

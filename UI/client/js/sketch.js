@@ -22,12 +22,12 @@ function preload() {
     nbCards = floor(w / 100); // max card in a row
     nbCardsMax = 5; //total cards provided
     // TODO: get this from the api
-    // nbCardsMax = loadJSON("http://147.135.194.248:8081/nbcard/1524134993/1524135042")
+    // nbCardsMax = loadJSON("http://147.135.194.248/nbcard/1524134993/1524135042")
     cardPos = 0; //Bottom first card
     timeToSave = 0; //timer to save cards
 
     for (var i = 0; i < nbCardsMax; i++) {
-        var url = "http://147.135.194.248:8081/card/" + i;
+        var url = "http://147.135.194.248/cards/" + i;
         var json = loadJSON(url, createCard)
     }
 }

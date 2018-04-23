@@ -9,19 +9,34 @@ function preload() {
     createWs = document.getElementById("NEW");
 
     console.log("preload");
-    wss = loadJSON("http://147.135.194.248/ws/" + userid)
-
-    var postData = { user_id: userid };
-    // httpPost("http://147.135.194.248:8080/ws/", 'json', postData, function(result) {
-    //     wss = result;
-    // }, errorFunction);
+    //wss = loadJSON("http://147.135.194.248/ws/" + userid)
 }
 
 function setup() {
-    console.log(userid);
     createWs.addEventListener("click", createNewWorkspace)
 
-    for (var i = 0; i < wss.ws.length; i++) {
+    var postData = { user_id: userid };
+    console.log(postData);
+
+    // httpPost("http://147.135.194.248/ws/", 'json', postData, function(result) {
+    //     wss = result;
+    // }, errorFunction);
+
+    var req = new XMLHttpRequest();
+
+    req.open("POST", "http://147.135.194.248/ws/", true);
+    req.addEventListener("load", wsLoader);
+    req.addEventListener("error", errorFunction);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.send(JSON.stringify(postData));
+}
+
+function wsLoader(ev) {
+    var tab = JSON.parse(this.responseText);
+    wss = tab;
+    console.log(wss)
+
+    for (var i = 0; i < wss["ws"].length; i++) {
         var newwork = new Workspaces(wss.ws[i].ws_id, wss.ws[i].ws_name)
         middle.appendChild(newwork.elm);
         console.log(newwork.elm);
@@ -40,18 +55,29 @@ function createNewWorkspace(ev) {
         return;
     }
     errTxt.innerHTML = "";
-    // var postData = { user_id: userid, ws_name: txt.value };
-    // httpPost("http://147.135.194.248:8080/createws/", 'json', postData, function(result) {
+    var postData = { user_id: userid, ws_name: txt.value };
+
+    var req = new XMLHttpRequest();
+    req.open("POST", "http://147.135.194.248/createws/", true);
+
+    req.addEventListener("load", function(result) {
+        txt.value = "";
+        location.reload();
+    });
+    req.addEventListener("error", errorFunction);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.send(JSON.stringify(postData));
+
+
+    // httpPost("http://147.135.194.248/createws/", 'json', postData, function(result) {
     //     txt.value = "";
     //     location.reload();
     // }, errorFunction);
 
-    resReq = loadJSON("http://147.135.194.248:8081/createws/" + userid + "/" + txt.value);
-    txt.value = "";
-    location.reload();
 };
 
 function errorFunction(err) {
-    console.log(err);
-    alert("Error");
-};
+    console.log("Erreur :",
+        err);
+    alert("Error " + err.toString());
+};;
