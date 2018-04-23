@@ -1,0 +1,41 @@
+version: '2'
+services:
+  db:
+    image: mysql:5.7
+    environment:
+        - MYSQL_ROOT_PASSWORD=my-super-secure-root-password
+        - MYSQL_USER=server
+        - MYSQL_PASSWORD=zeodine
+        - MYSQL_DATABASE=zeodine
+    labels:
+      - "traefik.frontend.rule=Host:mysql.docker.147.135.194.248"
+    networks:
+      - webapp
+      - default
+    container_name: db-api
+
+  serveur:
+    build:
+      context: .
+      dockerfile: "./Dockerfile"
+    restart: always
+    networks:
+      - webapp
+      - default
+    ports:
+      - "80:8080"
+    labels:
+      - "traefik.backend=test"
+      - "traefik.docker.network=webapp"
+      - "traefik.frontend.rule=Host:147.135.194.248"
+      - "traefik.enable=true"
+      - "traefik.port=8080"
+      - "traefik.default.protocol=http"
+      - "traefik.admin.frontend.rule=Host:admin.147.135.194.248"
+      - "traefik.admin.protocol=https"
+      - "traefik.admin.port=8081"
+    container_name: web-serveur
+    
+networks:
+  webapp:
+    external: true

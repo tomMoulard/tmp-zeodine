@@ -1,4 +1,4 @@
-package main
+package api
 
 import (
 	"database/sql"
@@ -572,7 +572,9 @@ func (dbm DbManager) setupDB() DbManager {
 	return dbm
 }
 
-func main() {
+// fespfsepslpselpsfpl
+// feoijseiojsfeoisf
+func ExecuteAPI(r *httprouter.Router) {
 	// var jsonS jsonManage
 	var dbm DbManager
 
@@ -580,14 +582,15 @@ func main() {
 
 	defer dbm.db.Close()
 
-	router := httprouter.New()
+	// r = httprouter.New()
 
-	router.GET("/newuser", dbm.newuser)
-	router.POST("/ws", dbm.ws)
-	router.POST("/createws", dbm.createws)
-	router.POST("/nbcard", dbm.nbcard)
-	router.POST("/load", dbm.load)
-	router.POST("/card", dbm.card)
-	router.POST("/save", dbm.save)
-	log.Fatal(http.ListenAndServe(":8080", router))
+	r.GET("/newuser", dbm.newuser)
+	r.POST("/ws", dbm.ws)
+	r.POST("/createws", dbm.createws)
+	r.POST("/nbcard", dbm.nbcard)
+	r.POST("/load", dbm.load)
+	r.POST("/card", dbm.card)
+	r.POST("/save", dbm.save)
+	//log.Fatal(http.ListenAndServe(":8080", r))
 }
+

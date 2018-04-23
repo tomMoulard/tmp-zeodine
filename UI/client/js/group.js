@@ -14,7 +14,7 @@ function Group(id, card1) {
         this.color = card1.color;
     } else {
         append(this.theCards, card1);
-        this.color = [Math.floor(Math.random() * 255), Math.floor(Math.random() * 255), Math.floor(Math.random() * 255)];
+        this.color = [random(255), random(255), random(255)];
     }
 
     this.display = function(color) {

@@ -9,7 +9,12 @@ function preload() {
     createWs = document.getElementById("NEW");
 
     console.log("preload");
-    wss = loadJSON("http://147.135.194.248:8081/ws/" + userid)
+    wss = loadJSON("http://147.135.194.248/ws/" + userid)
+
+    var postData = { user_id: userid };
+    // httpPost("http://147.135.194.248:8080/ws/", 'json', postData, function(result) {
+    //     wss = result;
+    // }, errorFunction);
 }
 
 function setup() {
@@ -35,8 +40,18 @@ function createNewWorkspace(ev) {
         return;
     }
     errTxt.innerHTML = "";
-    resReq = loadJSON("http://147.135.194.248:8081/createws/" + userid + "/" + txt.value);
-    txt.value = ""
+    // var postData = { user_id: userid, ws_name: txt.value };
+    // httpPost("http://147.135.194.248:8080/createws/", 'json', postData, function(result) {
+    //     txt.value = "";
+    //     location.reload();
+    // }, errorFunction);
 
+    resReq = loadJSON("http://147.135.194.248:8081/createws/" + userid + "/" + txt.value);
+    txt.value = "";
     location.reload();
+};
+
+function errorFunction(err) {
+    console.log(err);
+    alert("Error");
 };
