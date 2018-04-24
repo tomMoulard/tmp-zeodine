@@ -1,49 +1,46 @@
 {
-   "card0": {
-       "img": "http://147.135.194.248/img/aimant_du_changement.png",
-       "text": {
-         "eng" :"Change beloved",
-         "fr" : "Aimant du changement"
-       }
-   },
-
-   "card1": {
-       "img": "http://147.135.194.248/img/feedback_swandish.jpg",
-       "text": {
-         "eng" :"feedback sandwich",
-         "fr" : "Le retour du sandwich"
-       }
-   },
-
-   "card2": {
-       "img": "http://147.135.194.248/img/coeur_job.png",
-       "text": {
-         "eng" :"Job's hearth",
-         "fr" : "Le coeur du job"
-       }
-   },
-
-   "card3": {
-       "img": "http://147.135.194.248/img/PQV.jpg",
-       "text": {
-         "eng" :"PQV",
-         "fr" : "PQV"
-       }
-   },
-
-   "card4": {
-       "img": "http://147.135.194.248/img/tuer_expert.png",
-       "text": {
-         "eng" :"Kill the expert ",
-         "fr" : "Tuer l'expert"
-       }
-   },
-
-   "card5": {
-       "img": "http://147.135.194.248/img/manager_mouette.png",
-       "text": {
-         "eng" :"Manage seagull",
-         "fr" : "Le manager de mouette"
-       }
-   }
+  "cards": [
+    {
+      "img": "http://147.135.194.248/img/aimant_du_changement.png",
+      "text": {
+        "eng": "Change beloved",
+        "fr": "Aimant du changement"
+      }
+    },
+    {
+      "img": "http://147.135.194.248/img/feedback_swandish.jpg",
+      "text": {
+        "eng": "feedback sandwich",
+        "fr": "Le retour du sandwich"
+      }
+    },
+    {
+      "img": "http://147.135.194.248/img/coeur_job.png",
+      "text": {
+        "eng": "Job's hearth",
+        "fr": "Le coeur du job"
+      }
+    },
+    {
+      "img": "http://147.135.194.248/img/PQV.jpg",
+      "text": {
+        "eng": "PQV",
+        "fr": "PQV"
+      }
+    },
+    {
+      "img": "http://147.135.194.248/img/tuer_expert.png",
+      "text": {
+        "eng": "Kill the expert ",
+        "fr": "Tuer l'expert"
+      }
+    },
+    {
+      "img": "http://147.135.194.248/img/manager_mouette.png",
+      "text": {
+        "eng": "Manage seagull",
+        "fr": "Le manager de mouette"
+      }
+    }
+  ]
 }
