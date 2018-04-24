@@ -244,43 +244,22 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":2 }", err.Error(), Loaded.UserID)
 		return
 	}
-	res := "{ \"cards\": ["
+	res := "{ \"card_id\": ["
 	firstCard := true
 	for quer.Next() {
+		if firstCard{
+			firstCard = false
+		}
+		else {
+			res += ","
+		}
 		var card_id uint64
 		err = quer.Scan(&card_id)
 		if err != nil {
-			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":3 }", err.Error(), Loaded.UserID)
-			return
-		}
-		// Query card
-		que2, err := dbm.db.Prepare("SELECT body FROM zeodine.cards where card_id = ?")
-		if err != nil {
-			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":4 }", err.Error(), Loaded.UserID)
-			return
-		}
-		defer que2.Close()
-
-		// quer2, err := dbm.db.Query(strconv.Itoa(int(card_id)))
-		quer2, err := que2.Query(card_id)
-		if err != nil {
-			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5 }", err.Error(), Loaded.UserID)
-			return
-		}
-		for quer2.Next() {
-			if firstCard {
-				firstCard = false
-			} else {
-				res += ","
-			}
-			var card string
-			err = quer2.Scan(&card)
-			if err != nil {
-				// res += "{\"err\": \"" + err.Error() + "\", \"userID\": " + Loaded.UserID + ", \"code\":6 }"
-				res += fmt.Sprintf("\"err\": \"%s\", \"userID\": %d, \"code\": %d", err.Error(), Loaded.UserID, 6)
-			} else {
-				res += fmt.Sprintf("{\"card_id\":%d, \"card_content\":%s}", card_id, card)
-			}
+			// res += "{\"err\": \"" + err.Error() + "\", \"userID\": " + Loaded.UserID + ", \"code\":6 }"
+			res += fmt.Sprintf("{\"err\": \"%s\", \"userID\": %d, \"code\": %d}", err.Error(), Loaded.UserID, 6)
+		} else {
+			res += fmt.Sprintf("%d", card_id)
 		}
 	}
 	w.WriteHeader(200)
@@ -572,7 +551,6 @@ func (dbm DbManager) setupDB() DbManager {
 	return dbm
 }
 
-
 // ExecuteAPI Execute the api with the bdd
 func ExecuteAPI(r *httprouter.Router) {
 	// var jsonS jsonManage
@@ -593,5 +571,3 @@ func ExecuteAPI(r *httprouter.Router) {
 	r.POST("/save", dbm.save)
 	//log.Fatal(http.ListenAndServe(":8080", r))
 }
-
-
