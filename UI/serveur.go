@@ -172,9 +172,9 @@ func main() {
 	} else {
 		info, _ := file.Stat()
 		b := make([]byte, info.Size())
-		n, err := file.Read(b)
+		_, err = file.Read(b)
 
-		fmt.Println(n, " octets lus")
+		// fmt.Println(n, " octets lus")
 		if err != nil {
 			fmt.Println("Erreur lecture fichier")
 			jsonS.err = err
@@ -183,7 +183,7 @@ func main() {
 	}
 
 	jsonS.nbcard = len(jsonS.data)
-	fmt.Println(jsonS)
+	// fmt.Println(jsonS)
 
 	js := serv{path: "client/js/", mime_type: "application/javascript"}
 	css := serv{path: "client/css/", mime_type: "text/css"}

@@ -71,6 +71,15 @@ services:
       - "traefik.admin.port=8081"
     container_name: web-test
 
+  img:
+    image: tommoulard/nginx-img
+    labels:
+      - "traefik.frontend.rule=Host:img.docker.147.135.194.248"
+    networks:
+      - webapp
+      - default
+    container_name: img-test
+
 networks:
   webapp:
     external: true
