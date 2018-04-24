@@ -32,11 +32,12 @@ func (jsonS jsonManage) printCard(w http.ResponseWriter, r *http.Request, ps htt
 	if jsonS.err != nil {
 		mapErr := map[string]string{"erreur": "1", "id": ps.ByName("id"), "img": "", "text": "", "card": chaine}
 		res, err := json.Marshal(mapErr)
+		fmt.Println("Erreur lors du parse ", err)
 		if err != nil {
 			fmt.Println("Erreur du Marshal ", err)
 			return
 		}
-		fmt.Fprintln(w, string(res))
+		fmt.Fprintln(w, res)
 		return
 	}
 
@@ -44,11 +45,12 @@ func (jsonS jsonManage) printCard(w http.ResponseWriter, r *http.Request, ps htt
 	if mapCard0 == nil {
 		mapErr := map[string]string{"erreur": "-1", "id": ps.ByName("id"), "img": "", "text": "", "card": chaine}
 		res, err := json.Marshal(mapErr)
+		fmt.Println("Erreur de struct ", err)
 		if err != nil {
 			fmt.Println("Erreur du Marshal ", err)
 			return
 		}
-		fmt.Fprintln(w, string(res))
+		fmt.Fprintln(w, res)
 		return
 	}
 
@@ -60,6 +62,8 @@ func (jsonS jsonManage) printCard(w http.ResponseWriter, r *http.Request, ps htt
 		fmt.Println("Erreur du Marshal ", err)
 		return
 	}
+
+	fmt.Println("Card Success ", err)
 	fmt.Fprintln(w, res)
 
 }
@@ -183,17 +187,17 @@ func main() {
 
 	js := serv{path: "client/js/", mime_type: "application/javascript"}
 	css := serv{path: "client/css/", mime_type: "text/css"}
-	imgP := serv{path: "client/assets/productif/", mime_type: "image/png"}
-	imgS := serv{path: "client/assets/souverain/", mime_type: "image/png"}
-	imgG := serv{path: "client/assets/guerrier/", mime_type: "image/png"}
+	// imgP := serv{path: "productif/", mime_type: "image/png"}
+	// imgS := serv{path: "souverain/", mime_type: "image/png"}
+	// imgG := serv{path: "guerrier/", mime_type: "image/png"}
 
 	router := httprouter.New()
 	router.GET("/js/:info", js.printFile)
 	router.GET("/css/:info", css.printFile)
 
-	router.GET("/guerrier/:info", imgG.printFile)
-	router.GET("/souverain/:info", imgS.printFile)
-	router.GET("/productif/:info", imgP.printFile)
+	// router.GET("/guerrier/:info", imgG.printFile)
+	// router.GET("/souverain/:info", imgS.printFile)
+	// router.GET("/productif/:info", imgP.printFile)
 
 	router.GET("/", printPage4)
 	router.GET("/cards/:id", jsonS.printCard)
