@@ -271,7 +271,7 @@ type CardStruct struct {
 	WsID   uint64 `json:"ws_id"`
 }
 
-// router.GET("/card", dbm.card)
+// router.POST("/card", dbm.card)
 func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(500)
@@ -280,7 +280,8 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	var Card CardStruct
 	err := decoder.Decode(&Card)
 	if err != nil {
-		fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.0 }", err.Error(), Card.UserID)
+		log.Println(Card)
+		fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.0 }", err.Error(), Card.UserID)
 		return
 	}
 	defer r.Body.Close()
@@ -288,14 +289,14 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	// Query stacks
 	que, err := dbm.db.Prepare("SELECT card_id FROM zeodine.stacks where user_id = ? AND ws_id = ?")
 	if err != nil {
-		fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.1 }", err.Error(), Card.UserID)
+		fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.1 }", err.Error(), Card.UserID)
 		return
 	}
 	defer que.Close()
 
 	quer, err := dbm.db.Query(strconv.Itoa(int(Card.UserID)), Card.WsID)
 	if err != nil {
-		fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.2 }", err.Error(), Card.UserID)
+		fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.2 }", err.Error(), Card.UserID)
 		return
 	}
 	exist := false
@@ -303,7 +304,7 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	for quer.Next() && !exist {
 		err = quer.Scan(&card_id)
 		if err != nil {
-			fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.3 }", err.Error(), Card.UserID)
+			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.3 }", err.Error(), Card.UserID)
 			return
 		}
 		if card_id == Card.CardID {
@@ -314,20 +315,20 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		// Query card
 		que, err = dbm.db.Prepare("SELECT body FROM zeodine.cards where card_id = ?")
 		if err != nil {
-			fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.4 }", err.Error(), Card.UserID)
+			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.4 }", err.Error(), Card.UserID)
 			return
 		}
 		defer que.Close()
 		quer, err = dbm.db.Query(strconv.Itoa(int(card_id)))
 		if err != nil {
-			fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.5 }", err.Error(), Card.UserID)
+			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.5 }", err.Error(), Card.UserID)
 			return
 		}
 		for quer.Next() {
 			var card string //may be not just string
 			err = quer.Scan(&card)
 			if err != nil {
-				fmt.Fprint(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.6 }", err.Error(), Card.UserID)
+				fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.6 }", err.Error(), Card.UserID)
 				return
 			}
 			w.WriteHeader(200)
@@ -375,7 +376,7 @@ func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	for _, group := range saveStruct.Groupes {
 		// For all cards
 		for _, card := range group.Cards {
-			time.Sleep(1 * time.Second) // Remove a bug when generating new id
+			// time.Sleep(1 * time.Second) // Remove a bug when generating new id
 			// query the right stack
 			que, err := dbm.db.Prepare("SELECT stack_id FROM zeodine.stacks WHERE group_id = ? AND user_id = ? AND card_id = ? AND ws_id = ?")
 			if err != nil {
