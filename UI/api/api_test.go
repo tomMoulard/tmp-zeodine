@@ -242,7 +242,7 @@ func TestCard(t *testing.T) {
 		InitCard string
 		res        string
 	}{
-		{InitCard: "{\"card_id\":1, \"user_id\":1, \"ws_id\":1}", res: "{}"},
+		{InitCard: "{\"card_id\":1, \"user_id\":1, \"ws_id\":1}", res: "{\"img\": \"http://147.135.194.248/img/aimant_du_changement.png\", \"text\": {\"fr\": \"Aimant du changement\", \"eng\": \"Change beloved\"}}"},
 	}
 	for _, tt := range CardTest {
 		request, _ := http.NewRequest("POST", "/card", bytes.NewBufferString(tt.InitCard))

@@ -311,8 +311,8 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	}
 	defer que.Close()
 
-	quer, err := dbm.db.Query(strconv.Itoa(int(Card.UserID)), Card.WsID)
-	// quer, err := dbm.db.Query(Card.UserID, Card.WsID)
+	// quer, err := dbm.db.Query(strconv.Itoa(int(Card.UserID)), Card.WsID)
+	quer, err := que.Query(Card.UserID, Card.WsID)
 	if err != nil {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.2 }", err.Error(), Card.UserID)
@@ -333,29 +333,29 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	}
 	if exist {
 		// Query card
-		que, err = dbm.db.Prepare("SELECT body FROM zeodine.cards where card_id = ?")
+		que2, err := dbm.db.Prepare("SELECT body FROM zeodine.cards where card_id = ?")
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.4 }", err.Error(), Card.UserID)
 			return
 		}
-		defer que.Close()
-		quer, err = dbm.db.Query(strconv.Itoa(int(card_id)))
+		defer que2.Close()
+		quer2, err := que2.Query(strconv.Itoa(int(card_id)))
 		if err != nil {
 			w.WriteHeader(500)
 			fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.5 }", err.Error(), Card.UserID)
 			return
 		}
-		for quer.Next() {
+		for quer2.Next() {
 			var card string //may be not just string
-			err = quer.Scan(&card)
+			err = quer2.Scan(&card)
 			if err != nil {
 				w.WriteHeader(500)
 				fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.6 }", err.Error(), Card.UserID)
 				return
 			}
 			w.WriteHeader(200)
-			fmt.Fprintln(w, card)
+			fmt.Fprint(w, card)
 		}
 	} else {
 		w.WriteHeader(500)
@@ -669,21 +669,22 @@ func (dbm DbManager) setupDB() DbManager {
 			log.Printf("err: %s", err.Error())
 		}
 
-		fmt.Println(Cards.data["card"+strconv.Itoa(i)])
+		// fmt.Println(Cards.data["card"+strconv.Itoa(i)])
 
 		mapCard0 := Cards.data["card"+strconv.Itoa(i)]
 		mapCard := mapCard0.(map[string]interface{})
 		mapTxt := mapCard["text"].(map[string]interface{})
 
-		fmt.Printf("%T ", mapCard["img"])
-		fmt.Println(mapCard["img"])
+		// fmt.Printf("%T ", mapCard["img"])
+		// fmt.Println(mapCard["img"])
 
 		img := mapCard["img"].(string)
 		eng := mapTxt["eng"].(string)
 		fr := mapTxt["fr"].(string)
 
-		str := "{\"img\": \"" + img + "\" ,\"text\": { \"eng\": \"" + eng + "\" ,\"fr\": \"" + fr + "\"}}"
-		fmt.Println(str)
+		// str := "{\"img\": \"" + img + "\" ,\"text\": { \"eng\": \"" + eng + "\" ,\"fr\": \"" + fr + "\"}}"
+		str := fmt.Sprintf("{\"img\":\"%s\",\"text\": {\"eng\":\"%s\",\"fr\":\"%s\"}}", img, eng, fr)
+		// fmt.Println(str)
 
 		_, err = quer.Exec(str)
 		if err != nil {
@@ -691,7 +692,7 @@ func (dbm DbManager) setupDB() DbManager {
 			log.Printf("err: %s", err.Error())
 		}
 		quer.Close()
-		fmt.Println()
+		// fmt.Println()
 	}
 
 	return dbm
