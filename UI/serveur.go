@@ -4,7 +4,7 @@ import (
 	"app/api"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -149,15 +149,15 @@ func (s serv) printFile(w http.ResponseWriter, r *http.Request, ps httprouter.Pa
 
 	fmt.Println(s.path + info)
 
-	file, err := ioutil.ReadFile(s.path + info)
+	file, err := os.Open(s.path + info)
 	if err != nil {
-		w.WriteHeader(404)
-		fmt.Println("Erreur fichier")
-		fmt.Fprintf(w, "<h1>Error 404 : page not found</h1>")
+		io.WriteString(w, "Fichier non présent")
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	fmt.Fprintf(w, string(file))
+	io.Copy(w, file)
+
+	//fmt.Fprintf(w, string(file))
 }
 
 func main() {
@@ -183,21 +183,16 @@ func main() {
 	}
 
 	jsonS.nbcard = len(jsonS.data)
-	// fmt.Println(jsonS)
 
 	js := serv{path: "client/js/", mime_type: "application/javascript"}
 	css := serv{path: "client/css/", mime_type: "text/css"}
-	// imgP := serv{path: "productif/", mime_type: "image/png"}
-	// imgS := serv{path: "souverain/", mime_type: "image/png"}
-	// imgG := serv{path: "guerrier/", mime_type: "image/png"}
+	img := serv{path: "client/img/", mime_type: "image/png"}
 
 	router := httprouter.New()
 	router.GET("/js/:info", js.printFile)
 	router.GET("/css/:info", css.printFile)
 
-	// router.GET("/guerrier/:info", imgG.printFile)
-	// router.GET("/souverain/:info", imgS.printFile)
-	// router.GET("/productif/:info", imgP.printFile)
+	router.GET("/img/:info", img.printFile)
 
 	router.GET("/", printPage4)
 	router.GET("/cards/:id", jsonS.printCard)
@@ -208,4 +203,5 @@ func main() {
 	api.ExecuteAPI(router)
 
 	log.Fatal(http.ListenAndServe(":8080", router))
+	
 }

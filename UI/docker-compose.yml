@@ -1,5 +1,5 @@
 version: '2'
-services:
+services:  
   db:
     image: mysql:5.7
     environment:
@@ -14,11 +14,10 @@ services:
       - default
     container_name: db-api
 
-  serveur:
+  go:
     build:
       context: .
       dockerfile: "./Dockerfile"
-    restart: always
     networks:
       - webapp
       - default
@@ -38,7 +37,7 @@ services:
       - "traefik.admin.frontend.rule=Host:admin.147.135.194.248"
       - "traefik.admin.protocol=https"
       - "traefik.admin.port=8081"
-    container_name: web-serveur
+    container_name: go-serveur
     
 networks:
   webapp:
