@@ -18,11 +18,8 @@ services:
     build:
       context: .
       dockerfile: "./Dockerfile"
-<<<<<<< HEAD
-    # command: go run test app/api -v
+    # command: echo "test command in docker-config.yml"
     restart: always
-=======
->>>>>>> 13423f41f182006012bdbd344f43f30cdda26cdf
     networks:
       - webapp
       - default

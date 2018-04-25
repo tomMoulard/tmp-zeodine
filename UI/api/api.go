@@ -151,7 +151,7 @@ func (dbm DbManager) createws(w http.ResponseWriter, r *http.Request, _ httprout
 	}
 	defer r.Body.Close()
 
-	if CreateWs.UserID > 1 {
+	if CreateWs.UserID < 1 {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, "{\"ws_id\": 0, \"err\": \"%s\", \"userID\": %d, \"code\":2.1 }", "Use a valid \"user_id\"", CreateWs.UserID)
 		return
@@ -311,8 +311,8 @@ func (dbm DbManager) card(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	}
 	defer que.Close()
 
-	// quer, err := dbm.db.Query(strconv.Itoa(int(Card.UserID)), Card.WsID)
-	quer, err := dbm.db.Query(Card.UserID, Card.WsID)
+	quer, err := dbm.db.Query(strconv.Itoa(int(Card.UserID)), Card.WsID)
+	// quer, err := dbm.db.Query(Card.UserID, Card.WsID)
 	if err != nil {
 		w.WriteHeader(500)
 		fmt.Fprintf(w, "{\"err\": \"%s\", \"userID\": %d, \"code\":5.2 }", err.Error(), Card.UserID)
