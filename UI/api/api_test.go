@@ -83,6 +83,7 @@ func TestCreateWs(t *testing.T) {
 		res    string
 	}{
 		{InitWs: "{\"user_id\": 1, \"ws_name\": \"test ws name\"}", res: "{\"ws_id\": 1}"},
+		{InitWs: "{\"user_id\": 2, \"ws_name\": \"test ws name\"}", res: "{\"ws_id\": 1}"},
 		{InitWs: "{\"user_id\": 0, \"ws_name\": \"\"}", res: "{\"ws_id\": 2}"},
 		// TODO: sould return an error -> no user associated
 		{InitWs: "{\"usr_id\": 1, \"ws_name\": \"-1\"}", res: "{\"ws_id\": 3}"},
@@ -154,6 +155,7 @@ func TestLoad(t *testing.T) {
 		res      string
 	}{
 		{InitLoad: "{\"user_id\": 1,\"ws_id\": 1}", res: "{ \"card_id\": [1,2,3,4,5]}"},
+		{InitLoad: "{\"user_id\": 2,\"ws_id\": 1}", res: "{ \"card_id\": []}"},
 	}
 	for _, tt := range loadTest {
 		request, _ := http.NewRequest("POST", "/load", bytes.NewBufferString(tt.InitLoad))
@@ -176,6 +178,7 @@ func TestNbCard(t *testing.T) {
 		res        string
 	}{
 		{InitNbCard: "{\"user_id\": 1,\"ws_id\": 1}", res: "{\"nb_card\": 5}"},
+		{InitNbCard: "{\"user_id\": 2,\"ws_id\": 1}", res: "{\"nb_card\": 0}"},
 	}
 	for _, tt := range NbCardTest {
 		request, _ := http.NewRequest("POST", "/nbcard", bytes.NewBufferString(tt.InitNbCard))
