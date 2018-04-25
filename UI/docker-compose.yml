@@ -18,6 +18,7 @@ services:
     build:
       context: .
       dockerfile: "./Dockerfile"
+    # command: go run test app/api -v
     restart: always
     networks:
       - webapp
