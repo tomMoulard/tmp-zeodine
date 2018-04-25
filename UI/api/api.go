@@ -148,16 +148,22 @@ func (dbm DbManager) createws(w http.ResponseWriter, r *http.Request, _ httprout
 	}
 	defer r.Body.Close()
 
+	if CreateWs.UserID > 1 {
+		fmt.Fprintf(w, "{\"ws_id\": 0, \"err\": \"%s\", \"userID\": %d, \"code\":2.1 }", "Use a valid \"user_id\"", CreateWs.UserID)
+		return
+		
+	}
+
 	quer, err := dbm.db.Prepare("INSERT INTO zeodine.ws VALUES (NULL, ?, ?, NULL, NULL)")
 	if err != nil {
-		fmt.Fprintf(w, "{\"ws_id\": 0, \"err\": \"%s\", \"userID\": %d, \"code\":2.1 }", err.Error(), CreateWs.UserID)
+		fmt.Fprintf(w, "{\"ws_id\": 0, \"err\": \"%s\", \"userID\": %d, \"code\":2.2 }", err.Error(), CreateWs.UserID)
 		return
 	}
 	defer quer.Close()
 
 	_, err = quer.Exec(CreateWs.UserID, CreateWs.WsName)
 	if err != nil {
-		fmt.Fprintf(w, "{\"ws_id\": 0, \"err\": \"%s\", \"userID\": %d, \"code\":2.2 }", err.Error(), CreateWs.UserID)
+		fmt.Fprintf(w, "{\"ws_id\": 0, \"err\": \"%s\", \"userID\": %d, \"code\":2.3 }", err.Error(), CreateWs.UserID)
 		return
 	}
 
