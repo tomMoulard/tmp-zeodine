@@ -1,31 +1,49 @@
 {
-"card0" : { 
-        "img" : "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/16777216colors.png/220px-16777216colors.png",
-        "text": "Une carte avec plein de couleur"
+    "card0": {
+        "img": "http://147.135.194.248/img/aimant_du_changement.png",
+        "text": {
+            "eng": "Change beloved",
+            "fr": "Aimant du changement"
+        }
     },
 
-    "card1" : { 
-        "img" : "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/16777216colors.png/220px-16777216colors.png",
-        "text": "Une carte avec plein de couleur"
+    "card1": {
+        "img": "http://147.135.194.248/img/feedback_swandish.jpg",
+        "text": {
+            "eng": "feedback sandwich",
+            "fr": "Le retour du sandwich"
+        }
     },
 
-    "card2" : {
-        "img" : "http://www.iep.utm.edu/wp-content/media/blue.gif",
-        "text": "Une carte bleu"
+    "card2": {
+        "img": "http://147.135.194.248/img/coeur_job.png",
+        "text": {
+            "eng": "Job's hearth",
+            "fr": "Le coeur du job"
+        }
     },
 
-    "card3" : {
-        "img" : "https://5.imimg.com/data5/UW/GD/MY-4386233/organic-holi-color-500x500.jpg",
-        "text": "De la poudre de couleur"
+    "card3": {
+        "img": "http://147.135.194.248/img/PQV.jpg",
+        "text": {
+            "eng": "PQV",
+            "fr": "PQV"
+        }
     },
 
-    "card4" : {
-        "img" : "https://manyinterestingfacts.files.wordpress.com/2014/08/color-wheel-graduate-shades.jpg?w=500",
-        "text": "Un cercle chromatique"
+    "card4": {
+        "img": "http://147.135.194.248/img/tuer_expert.png",
+        "text": {
+            "eng": "Kill the expert ",
+            "fr": "Tuer l'expert"
+        }
     },
-        
+
     "card5": {
-        "img" : "https://cnet1.cbsistatic.com/img/nnIHGniJeasAzlJm62omx_jmlEY=/1600x900/2017/02/26/9988856a-6679-41cf-9a28-8ab981ba0436/what-is-wcg.jpg",
-        "text": "Un arc en ciel"
+        "img": "http://147.135.194.248/img/manager_mouette.png",
+        "text": {
+            "eng": "Manage seagull",
+            "fr": "Le manager de mouette"
+        }
     }
 }
