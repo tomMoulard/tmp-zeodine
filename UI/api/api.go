@@ -151,7 +151,7 @@ func (dbm DbManager) createws(w http.ResponseWriter, r *http.Request, _ httprout
 	if CreateWs.UserID > 1 {
 		fmt.Fprintf(w, "{\"ws_id\": 0, \"err\": \"%s\", \"userID\": %d, \"code\":2.1 }", "Use a valid \"user_id\"", CreateWs.UserID)
 		return
-		
+
 	}
 
 	quer, err := dbm.db.Prepare("INSERT INTO zeodine.ws VALUES (NULL, ?, ?, NULL, NULL)")
@@ -604,62 +604,62 @@ func (dbm DbManager) setupDB() DbManager {
 	dbm.createTable("zeodine.tags", "tag_id INT(64) NOT NULL AUTO_INCREMENT PRIMARY KEY, tag_val VARCHAR(31), card_id INT(64) DEFAULT NULL")
 
 	// //Parsing global cards
-// var Cards jsonManage
-// //var b []byte
+	var Cards jsonManage
+	//var b []byte
 
-// file, err := os.Open("/var/tmp/card.json")
-// defer file.Close()
+	file, err := os.Open("/var/tmp/card.json")
+	defer file.Close()
 
-// if err != nil {
-// 	fmt.Println("Erreur ouverture fichier")
-// 	Cards.err = err
-// 	return dbm
-// } else {
-// 	info, _ := file.Stat()
-// 	b := make([]byte, info.Size())
-// 	n, err := file.Read(b)
+	if err != nil {
+		fmt.Println("Erreur ouverture fichier")
+		Cards.err = err
+		return dbm
+	} else {
+		info, _ := file.Stat()
+		b := make([]byte, info.Size())
+		n, err := file.Read(b)
 
-// 	fmt.Println(n, " octets lus")
-// 	if err != nil {
-// 		fmt.Println("Erreur lecture fichier")
-// 		Cards.err = err
-// 	}
-// 	json.Unmarshal(b, &Cards.data)
-// }
+		fmt.Println(n, " octets lus")
+		if err != nil {
+			fmt.Println("Erreur lecture fichier")
+			Cards.err = err
+		}
+		json.Unmarshal(b, &Cards.data)
+	}
 
-// Cards.nbcard = len(Cards.data)
+	Cards.nbcard = len(Cards.data)
 
-// for i := 0; i < Cards.nbcard; i++ {
-// 	quer, err := dbm.db.Prepare("INSERT INTO zeodine.cards VALUES (NULL, ?, 0,FALSE)")
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		log.Printf("err: %s", err.Error())
-// 	}
+	for i := 0; i < Cards.nbcard; i++ {
+		quer, err := dbm.db.Prepare("INSERT INTO zeodine.cards VALUES (NULL, ?, 0,FALSE)")
+		if err != nil {
+			fmt.Println(err)
+			log.Printf("err: %s", err.Error())
+		}
 
-// 	fmt.Println(Cards.data["card"+strconv.Itoa(i)])
+		fmt.Println(Cards.data["card"+strconv.Itoa(i)])
 
-// 	mapCard0 := Cards.data["card"+strconv.Itoa(i)]
-// 	mapCard := mapCard0.(map[string]interface{})
-// 	mapTxt:= mapCard["text"].(map[string]interface{})
+		mapCard0 := Cards.data["card"+strconv.Itoa(i)]
+		mapCard := mapCard0.(map[string]interface{})
+		mapTxt := mapCard["text"].(map[string]interface{})
 
-// 	fmt.Printf("%T ",mapCard["img"])
-// 	fmt.Println(mapCard["img"])
+		fmt.Printf("%T ", mapCard["img"])
+		fmt.Println(mapCard["img"])
 
-// 	img:=mapCard["img"].(string)
-// 	eng:=mapTxt["eng"].(string)
-// 	fr:=mapTxt["fr"].(string)
+		img := mapCard["img"].(string)
+		eng := mapTxt["eng"].(string)
+		fr := mapTxt["fr"].(string)
 
-// 	str := "{\"img\": \""+img +"\" ,\"text\": { \"eng\": \""+ eng +"\" ,\"fr\": \""+fr+"\"}}"
-// 	fmt.Println(str)
+		str := "{\"img\": \"" + img + "\" ,\"text\": { \"eng\": \"" + eng + "\" ,\"fr\": \"" + fr + "\"}}"
+		fmt.Println(str)
 
-// 	_, err = quer.Exec(str)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		log.Printf("err: %s", err.Error())
-// 	}
-// 	quer.Close()
-// 	fmt.Println()
-// }
+		_, err = quer.Exec(str)
+		if err != nil {
+			fmt.Println(err)
+			log.Printf("err: %s", err.Error())
+		}
+		quer.Close()
+		fmt.Println()
+	}
 
 	return dbm
 }
