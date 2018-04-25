@@ -215,7 +215,7 @@ func (dbm DbManager) nbcard(w http.ResponseWriter, r *http.Request, _ httprouter
 		nbcard += 1
 	}
 	w.WriteHeader(200)
-	fmt.Fprintln(w, "{\"nb_card\": "+strconv.Itoa(nbcard)+"}")
+	fmt.Fprint(w, "{\"nb_card\": "+strconv.Itoa(nbcard)+"}")
 }
 
 type LoadStruct struct {
@@ -268,7 +268,7 @@ func (dbm DbManager) load(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		}
 	}
 	w.WriteHeader(200)
-	fmt.Fprintln(w, res+"]}")
+	fmt.Fprint(w, res+"]}")
 }
 
 type CardStruct struct {
@@ -458,7 +458,7 @@ func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, _ httprouter.P
 		}
 	}
 	w.WriteHeader(200)
-	fmt.Fprintln(w, "{\"saved\": true}")
+	fmt.Fprint(w, "{\"saved\": true}")
 }
 
 type TagStruct struct {
@@ -493,7 +493,7 @@ func (dbm DbManager) tag(w http.ResponseWriter, r *http.Request, _ httprouter.Pa
 	}
 
 	w.WriteHeader(200)
-	fmt.Fprintln(w, "{\"tagged\": true}")
+	fmt.Fprint(w, "{\"tagged\": true}")
 }
 
 type GetTagStruct struct {
@@ -544,7 +544,7 @@ func (dbm DbManager) gettag(w http.ResponseWriter, r *http.Request, _ httprouter
 		}
 	}
 	w.WriteHeader(200)
-	fmt.Fprintln(w, res+"]}")
+	fmt.Fprint(w, res+"]}")
 }
 
 func (dbm DbManager) createTable(tableName, tableContent string) {
