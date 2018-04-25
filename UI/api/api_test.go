@@ -130,7 +130,8 @@ func TestSave(t *testing.T) {
 		InitSave string
 		res      string
 	}{
-		{InitSave: "{\"user_id\": 1,\"ws_id\": 1,\"groupes\": [{\"groupe_id\": 12,\"cards\": [{\"card_id\": 1,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 2,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 3,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 4,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}}]},{\"groupe_id\": 21,\"cards\": [{\"card_pub\": false,\"card_id\": 5,\"card\": {\"card_content\": \"{\"card_pos\":12}\"}}]}]}", res: "{\"saved\": true}"},
+		{InitSave: "{\"user_id\": 1,\"ws_id\": 1,\"groupes\": [{\"groupe_id\": 12,\"cards\": [{\"card_id\": 1,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 2,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 3,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 4,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}}]},{\"groupe_id\": 21,\"cards\": [{\"card_pub\": false,\"card_id\": 5,\"card\": {\"card_content\": \"{\\\"card_pos\\\":12}\"}}]}]}", res: "{\"saved\": true}"},
+		{InitSave: "{\"user_id\": 1,\"ws_id\": 1,\"groupes\": [{\"groupe_id\": 12,\"cards\": [{\"card_id\": 1,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 2,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 3,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 4,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}}]},{\"groupe_id\": 21,\"cards\": [{\"card_pub\": false,\"card_id\": 5,\"card\": {\"card_content\": \"{\"card_pos\":12}\"}}]}]}", res: "{\"saved\": false, \"error\": invalid character 'c' after object key:value pair, \"code\":6.0"}},
 	}
 	for _, tt := range SaveTest {
 		request, _ := http.NewRequest("POST", "/save", bytes.NewBufferString(tt.InitSave))
@@ -174,7 +175,7 @@ func TestNbCard(t *testing.T) {
 		InitNbCard string
 		res        string
 	}{
-		{InitNbCard: "{\"user_id\": 1,\"ws_id\": 1}", res: "{ \"nb_card\": 5}"},
+		{InitNbCard: "{\"user_id\": 1,\"ws_id\": 1}", res: "{\"nb_card\": 5}"},
 	}
 	for _, tt := range NbCardTest {
 		request, _ := http.NewRequest("POST", "/nbcard", bytes.NewBufferString(tt.InitNbCard))
