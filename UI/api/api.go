@@ -604,39 +604,62 @@ func (dbm DbManager) setupDB() DbManager {
 	dbm.createTable("zeodine.tags", "tag_id INT(64) NOT NULL AUTO_INCREMENT PRIMARY KEY, tag_val VARCHAR(31), card_id INT(64) DEFAULT NULL")
 
 	// //Parsing global cards
-	// var Cards jsonManage
+// var Cards jsonManage
+// //var b []byte
 
-	// file, err := os.Open("/var/tmp/card.json")
-	// if err != nil {
-	// 	log.Printf("err: %s", err.Error())
-	// 	return dbm
-	// }
-	// defer file.Close()
+// file, err := os.Open("/var/tmp/card.json")
+// defer file.Close()
 
-	// info, _ := file.Stat()
-	// b := make([]byte, info.Size())
-	// _, err = file.Read(b)
-	// if err != nil {
-	// 	log.Printf("err: %s", err.Error())
-	// }
+// if err != nil {
+// 	fmt.Println("Erreur ouverture fichier")
+// 	Cards.err = err
+// 	return dbm
+// } else {
+// 	info, _ := file.Stat()
+// 	b := make([]byte, info.Size())
+// 	n, err := file.Read(b)
 
-	// // fmt.Println(n, " octets lus")
-	// json.Unmarshal(b, &Cards.data)
+// 	fmt.Println(n, " octets lus")
+// 	if err != nil {
+// 		fmt.Println("Erreur lecture fichier")
+// 		Cards.err = err
+// 	}
+// 	json.Unmarshal(b, &Cards.data)
+// }
 
-	// //inserting the default cards
-	// quer, err := dbm.db.Prepare("INSERT INTO zeodine.cards VALUES (NULL, ?, 0)")
-	// if err != nil {
-	// 	log.Printf("err: %s", err.Error())
-	// }
-	// defer quer.Close()
+// Cards.nbcard = len(Cards.data)
 
-	// Query
-	// for _, card := range Card.Cards {
-	// 	_, err = quer.Exec("{" + card.Content + "}")
-	// 	if err != nil {
-	// 		log.Printf("err: %s", err.Error())
-	// 	}
-	// }
+// for i := 0; i < Cards.nbcard; i++ {
+// 	quer, err := dbm.db.Prepare("INSERT INTO zeodine.cards VALUES (NULL, ?, 0,FALSE)")
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		log.Printf("err: %s", err.Error())
+// 	}
+
+// 	fmt.Println(Cards.data["card"+strconv.Itoa(i)])
+
+// 	mapCard0 := Cards.data["card"+strconv.Itoa(i)]
+// 	mapCard := mapCard0.(map[string]interface{})
+// 	mapTxt:= mapCard["text"].(map[string]interface{})
+
+// 	fmt.Printf("%T ",mapCard["img"])
+// 	fmt.Println(mapCard["img"])
+
+// 	img:=mapCard["img"].(string)
+// 	eng:=mapTxt["eng"].(string)
+// 	fr:=mapTxt["fr"].(string)
+
+// 	str := "{\"img\": \""+img +"\" ,\"text\": { \"eng\": \""+ eng +"\" ,\"fr\": \""+fr+"\"}}"
+// 	fmt.Println(str)
+
+// 	_, err = quer.Exec(str)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		log.Printf("err: %s", err.Error())
+// 	}
+// 	quer.Close()
+// 	fmt.Println()
+// }
 
 	return dbm
 }

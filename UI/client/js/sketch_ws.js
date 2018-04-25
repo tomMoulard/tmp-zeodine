@@ -7,8 +7,6 @@ function preload() {
     allWorkspaces = [];
     middle = document.getElementById("middle");
     createWs = document.getElementById("NEW");
-
-    console.log("preload");
     //wss = loadJSON("http://147.135.194.248/ws/" + userid)
 }
 
@@ -80,4 +78,4 @@ function errorFunction(err) {
     console.log("Erreur :",
         err);
     alert("Error " + err.toString());
-};;
+};

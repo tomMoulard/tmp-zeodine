@@ -8,6 +8,7 @@ var nbCardsMax;
 var cardPos;
 var timeToSave;
 var bottomCards;
+var json;
 var ws;
 
 function preload() {
@@ -20,22 +21,22 @@ function preload() {
     mouseIsPressedHere = false;
     doubleClick = false;
     nbCards = floor(w / 100); // max card in a row
-    nbCardsMax = 5; //total cards provided
-    // TODO: get this from the api
-    // nbCardsMax = loadJSON("http://147.135.194.248/nbcard/1524134993/1524135042")
+    nbCardsMax = 0; //total cards provided
     cardPos = 0; //Bottom first card
     timeToSave = 0; //timer to save cards
-
-    for (var i = 0; i < nbCardsMax; i++) {
-        var url = "http://147.135.194.248/cards/" + i;
-        var json = loadJSON(url, createCard)
-    }
 }
 
 function setup() {
     console.log(userid, wsid)
     createCanvas(w, h);
-    buildBottomCards()
+    var postData = { user_id: userid, ws_id: wsid };
+    var req = new XMLHttpRequest();
+    req.open("POST", "http://147.135.194.248/load/", true);
+
+    req.addEventListener("load", loadCard);
+    req.addEventListener("error", errorFunction);
+    req.setRequestHeader("Content-Type", "application/json");
+    req.send(JSON.stringify(postData));
 }
 
 
@@ -189,4 +190,19 @@ function buildBottomCards() {
         append(bottomCards, tmpCard);
         cardPos += 1;
     }
+    addcss(base_css);
+}
+
+function errorFunction(err) {
+    console.log("Erreur :",
+        err);
+    alert("Error " + err.toString());
+}
+
+function loadCard(ev) {
+    var json = JSON.parse(this.responseText)
+    for (var i = 0; i < json["cardid"].length; i++) {
+
+    }
+    buildBottomCards();
 }
