@@ -371,7 +371,7 @@ func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, _ httprouter.P
 	var saveStruct SaveStruct
 	err := decoder.Decode(&saveStruct)
 	if err != nil {
-		fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":6.0}", err.Error())
+		fmt.Fprintf(w, "{\"saved\": false, \"error\": \"%s\", \"code\":6.0}", err.Error())
 		return
 	}
 	defer r.Body.Close()
@@ -386,14 +386,14 @@ func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, _ httprouter.P
 			// query the right stack
 			que, err := dbm.db.Prepare("SELECT stack_id FROM zeodine.stacks WHERE group_id = ? AND user_id = ? AND card_id = ? AND ws_id = ?")
 			if err != nil {
-				fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":6.1}", err.Error())
+				fmt.Fprintf(w, "{\"saved\": false, \"error\": \"%s\", \"code\":6.1}", err.Error())
 				return
 			}
 			defer que.Close()
 
 			quer, err := que.Query(group.GroupeID, saveStruct.UserID, card.CardID, saveStruct.WsID)
 			if err != nil {
-				fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":6.2}", err.Error())
+				fmt.Fprintf(w, "{\"saved\": false, \"error\": \"%s\", \"code\":6.2}", err.Error())
 				return
 			}
 			var stack_id uint64
@@ -401,20 +401,20 @@ func (dbm DbManager) save(w http.ResponseWriter, r *http.Request, _ httprouter.P
 			for quer.Next() {
 				err := quer.Scan(&stack_id)
 				if err != nil {
-					fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":6.3}", err.Error())
+					fmt.Fprintf(w, "{\"saved\": false, \"error\": \"%s\", \"code\":6.3}", err.Error())
 					return
 				}
 			}
 			if stack_id == 0 {
 				que2, err := dbm.db.Prepare("INSERT INTO zeodine.stacks VALUE (NULL, ?, ?, ?, ?)")
 				if err != nil {
-					fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":6.4}", err.Error())
+					fmt.Fprintf(w, "{\"saved\": false, \"error\": \"%s\", \"code\":6.4}", err.Error())
 					return
 				}
 				defer que2.Close()
 				_, err = que2.Query(card.CardID, saveStruct.UserID, group.GroupeID, saveStruct.WsID)
 				if err != nil {
-					fmt.Fprintf(w, "{\"saved\": false, \"error\": %s, \"code\":6.5}", err.Error())
+					fmt.Fprintf(w, "{\"saved\": false, \"error\": \"%s\", \"code\":6.5}", err.Error())
 					return
 				}
 				stack_id = dbm.getLastId()
