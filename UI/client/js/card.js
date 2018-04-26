@@ -1,8 +1,9 @@
-function Card(x, y, imgURL, desc) {
+function Card(x, y, imgURL, desc, id) {
     this.x = x;
     this.y = y;
     this.w = 90;
     this.h = 180;
+    this.id = id;
     this.imgURL = imgURL;
     this.img = loadImage(this.imgURL);
     this.desc = desc;
@@ -46,6 +47,7 @@ function Card(x, y, imgURL, desc) {
                 min_wh / 3 - 8, //width of the pict
                 min_wh / 3 - 8) // height of the pict
         noStroke();
+        textSize(18);
         text(this.desc, // text to display
             (min_wh / 10) + 4, // x pos
             (min_wh / 10) + min_wh / 3, // y pos
@@ -79,13 +81,6 @@ function Card(x, y, imgURL, desc) {
     }
 
     this.save = function() {
-        return {
-            "x": this.x,
-            "y": this.y,
-            "w": this.w,
-            "h": this.h,
-            "img": this.imgURL,
-            "text": this.desc
-        }
+        return []
     }
 }

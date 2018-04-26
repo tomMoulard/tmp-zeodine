@@ -8,11 +8,12 @@ var nbCardsMax;
 var cardPos;
 var timeToSave;
 var bottomCards;
+var openPanel;
 var json;
 var ws;
 
 function preload() {
-
+    openPanel = false;
     h = windowHeight;
     w = windowWidth;
     cards = []; //Personal cards
@@ -44,7 +45,6 @@ function windowResized() {
     resizeCanvas(windowWidth, windowHeight);
     h = windowHeight;
     w = windowWidth;
-    bottomCards = [];
     nbCards = floor(w / 100);
     buildBottomCards();
 }
@@ -65,22 +65,38 @@ function draw() {
     if (mouseIsPressedHere) {
         cards[thisCardsID[0]].move(mouseX, mouseY, thisCardsID[1]);
     }
-    if (timeToSave > 1000) { // var req1 = new XMLHttpRequest();
-        // req1.open("GET",url,true);
-        // req1.addEventListener("load",createCard);
-        // req1.addEventListener("error",erreur);
-        // req1.send(null);
+    if (timeToSave > 1000) {
+        var crd = { card_content: "too" };
+        var crds = { card_pub: crdp, card_id: crd_id, card: crd };
+        var grs = { groupe_id: gr_id, cards: crds };
+        var grs = [];
+        var postData = { user_id: userid, ws_id: wsid, groupes: grs };
 
-        `{"user_id": 1,"ws_id": 1,"groupes": [{"groupe_id": 12,"cards": [{"card_id": 1,"card": {"card_content": "{}"}},{"card_id": 2,"card": {"card_content": "{}"}},{"card_id": 3,"card": {"card_content": "{}"}},{"card_id": 4,"card": {"card_content": "{}"}}]},{"groupe_id": 21,"cards": [{"card_id": 5,"card": {"card_content": "{\"card_pos\":12}"}}]}]}`
-        var res = [];
-        for (var i = 0; i < cards.length; i++) {
-            append(res, cards[i].save());
+        for (var i = 0; i < cards.length; ++i) {
+            append(grs, cards[i].save());
         }
+
+        var req1 = new XMLHttpRequest();
+        req1.open("GET", "http://147.135.194.248/load/", true);
+        req1.addEventListener("load", saveCard);
+        req1.addEventListener("error", errorFunction);
+        req.send(JSON.stringify(postData));
+
+        `{"user_id": 1,"ws_id": 1,"groupes": 
+        [{"groupe_id": 12,"cards": 
+            [{"card_id": 1,
+                "card": {"card_content": "{}"}},{"card_id": 2,"card": {"card_content": "{}"}},{"card_id": 3,"card": {"card_content": "{}"}},{"card_id": 4,"card": {"card_content": "{}"}}]},{"groupe_id": 21,"cards": [{"card_id": 5,"card": {"card_content": "{\"card_pos\":12}"}}
+            ]}
+        ]}`
+
         console.log("Saving ...");
-        console.log({ res });
+        console.log({ grs });
         timeToSave = -1;
     }
-    cardClose()
+    stroke(255, 0, 0);
+    rectMode(CENTER);
+    rect(50, 50, 20, 30);
+    cardClose();
     timeToSave += 1;
 }
 
@@ -101,6 +117,23 @@ function doubleClicked() {
 
 function mousePressed() {
     if (doubleClick) { return; }
+
+    if (mouseX > 50 - (10) &&
+        mouseX < 50 + (10) &&
+        mouseY > 50 - (15) &&
+        mouseY < 50 + (15)) {
+
+        if (openPanel) {
+            resizeCanvas(windowWidth * 0.8, windowHeight);
+            openPanel = false;
+        } else {
+            resizeCanvas(windowWidth, windowHeight);
+            openPanel = true;
+        }
+
+
+        return;
+    }
 
     if (mouseX < w && mouseY < h - 245) {
         cardID = isCard(mouseX, mouseY, cards);
@@ -134,75 +167,6 @@ function keyPressed() {
     } else if (keyCode == RIGHT_ARROW) {
         cardPos -= 1
         if (cardPos < 0) { cardPos = nbCardsMax - 1; }
-    }
-    buildBottomCards();
-}
-
-function createCard(json) {
-    var posX = map(json.id, 0, w, 0, nbCards);
-    var newCard = new Card(posX,
-        h - 185,
-        json.img,
-        json.text);
-    append(loadedCards, newCard);
-}
-
-function cardClose() {
-    for (var i = 0; i < cards.length; i++) {
-        for (var j = i + 1; j < cards.length; j++) {
-            if (Math.abs(cards[i].x - cards[j].x) < 20 &&
-                Math.abs(cards[i].y - cards[j].y) < 20) {
-                fusionCard(cards[i], cards[j])
-            }
-        }
-    }
-}
-
-function fusionCard(card1, card2) {
-    var gr = new Group(0, card1);
-    gr.appendCard(card2)
-    cards.splice(cards.indexOf(card1), 1);
-    cards.splice(cards.indexOf(card2), 1);
-    append(cards, gr);
-    mouseIsPressedHere = false;
-}
-
-function isCard(x, y, list) {
-    var res = [false, -1];
-    for (var i = 0; i < list.length; i++) {
-        res = list[i].check(x, y);
-        if (res[0]) {
-            return [i, res[1]]
-        }
-    }
-    return [-1, -1];
-}
-
-function buildBottomCards() {
-    for (var i = 0; i < nbCards; i++) {
-        if (cardPos >= nbCardsMax) { cardPos = 0; }
-        var posX = map(i, 0, nbCards, 80, w + 20);
-
-        var tmpCard = new Card(posX,
-            h - 155,
-            loadedCards[cardPos].imgURL,
-            loadedCards[cardPos].desc);
-        append(bottomCards, tmpCard);
-        cardPos += 1;
-    }
-    addcss(base_css);
-}
-
-function errorFunction(err) {
-    console.log("Erreur :",
-        err);
-    alert("Error " + err.toString());
-}
-
-function loadCard(ev) {
-    var json = JSON.parse(this.responseText)
-    for (var i = 0; i < json["cardid"].length; i++) {
-
     }
     buildBottomCards();
 }

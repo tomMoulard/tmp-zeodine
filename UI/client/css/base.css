@@ -11,6 +11,19 @@ a {
     text-decoration: none;
 }
 
+#right_pannel {
+    width: 20%;
+    height: 100%;
+    background-color: blue;
+    display: inline;
+    position: fixed;
+    left: -20%;
+}
+
+canvas {
+    position: fixed;
+}
+
 div.ws:hover,
 #createNewWs:hover {
     background-color: #ebe8e8;
