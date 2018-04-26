@@ -82,12 +82,16 @@ func TestCreateWs(t *testing.T) {
 		InitWs string
 		res    string
 	}{
-		{InitWs: "{\"user_id\": 1, \"ws_name\": \"test ws name\"}", res: "{\"ws_id\": 1}"},
-		{InitWs: "{\"user_id\": 2, \"ws_name\": \"test ws name\"}", res: "{\"ws_id\": 2}"},
-		{InitWs: "{\"user_id\": 0, \"ws_name\": \"\"}", res: "{\"ws_id\": 0, \"err\": \"Use a valid \"user_id\"\", \"userID\": 0, \"code\":2.1 }"},
+		{InitWs: "{\"user_id\": 1, \"ws_name\": \"test ws name\"}",
+			res: "{\"ws_id\": 1}"},
+		{InitWs: "{\"user_id\": 2, \"ws_name\": \"test ws name\"}",
+			res: "{\"ws_id\": 2}"},
+		{InitWs: "{\"user_id\": 0, \"ws_name\": \"\"}",
+			res: "{\"ws_id\": 0, \"err\": \"Use a valid \"user_id\"\", \"userID\": 0, \"code\":2.1 }"},
 	}
 	for _, tt := range createwsTest {
-		request, _ := http.NewRequest("POST", "/createws", bytes.NewBufferString(tt.InitWs))
+		request, _ := http.NewRequest("POST", "/createws",
+			bytes.NewBufferString(tt.InitWs))
 		result := httptest.NewRecorder()
 		r1.ServeHTTP(result, request)
 		if result.Body.String() != tt.res {
@@ -106,10 +110,12 @@ func Testws(t *testing.T) {
 		InitWs string
 		res    string
 	}{
-		{InitWs: "{\"user_id\": 1}", res: "{\"ws\": [{\"ws_id\": 1,\"ws_name\": \"test ws name\",\"user_id\": 1}]}"},
+		{InitWs: "{\"user_id\": 1}",
+			res: "{\"ws\": [{\"ws_id\": 1,\"ws_name\": \"test ws name\",\"user_id\": 1}]}"},
 	}
 	for _, tt := range wsTest {
-		request, _ := http.NewRequest("POST", "/ws", bytes.NewBufferString(tt.InitWs))
+		request, _ := http.NewRequest("POST", "/ws",
+			bytes.NewBufferString(tt.InitWs))
 		result := httptest.NewRecorder()
 		r1.ServeHTTP(result, request)
 		if result.Body.String() != tt.res {
@@ -128,11 +134,14 @@ func TestSave(t *testing.T) {
 		InitSave string
 		res      string
 	}{
-		{InitSave: "{\"user_id\": 1,\"ws_id\": 1,\"groupes\": [{\"groupe_id\": 12,\"cards\": [{\"card_id\": 1,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 2,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 3,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 4,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}}]},{\"groupe_id\": 21,\"cards\": [{\"card_pub\": false,\"card_id\": 5,\"card\": {\"card_content\": \"{\\\"card_pos\\\":12}\"}}]}]}", res: "{\"saved\": true}"},
-		{InitSave: "{\"user_id\": 1,\"ws_id\": 1,\"groupes\": [{\"groupe_id\": 12,\"cards\": [{\"card_id\": 1,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 2,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 3,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 4,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}}]},{\"groupe_id\": 21,\"cards\": [{\"card_pub\": false,\"card_id\": 5,\"card\": {\"card_content\": \"{\"card_pos\":12}\"}}]}]}", res: "{\"saved\": false, \"error\": \"invalid character 'c' after object key:value pair\", \"code\":6.0}"},
+		{InitSave: "{\"user_id\": 1,\"ws_id\": 1,\"groupes\": [{\"groupe_id\": 12,\"cards\": [{\"card_id\": 1,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 2,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 3,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 4,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}}]},{\"groupe_id\": 21,\"cards\": [{\"card_pub\": false,\"card_id\": 5,\"card\": {\"card_content\": \"{\\\"card_pos\\\":12}\"}}]}]}",
+			res: "{\"saved\": true}"},
+		{InitSave: "{\"user_id\": 1,\"ws_id\": 1,\"groupes\": [{\"groupe_id\": 12,\"cards\": [{\"card_id\": 1,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 2,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 3,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}},{\"card_id\": 4,\"card_pub\": false,\"card\": {\"card_content\": \"{}\"}}]},{\"groupe_id\": 21,\"cards\": [{\"card_pub\": false,\"card_id\": 5,\"card\": {\"card_content\": \"{\"card_pos\":12}\"}}]}]}",
+			res: "{\"saved\": false, \"error\": \"invalid character 'c' after object key:value pair\", \"code\":6.0}"},
 	}
 	for _, tt := range SaveTest {
-		request, _ := http.NewRequest("POST", "/save", bytes.NewBufferString(tt.InitSave))
+		request, _ := http.NewRequest("POST", "/save",
+			bytes.NewBufferString(tt.InitSave))
 		result := httptest.NewRecorder()
 		r1.ServeHTTP(result, request)
 		if result.Body.String() != tt.res {
@@ -151,11 +160,14 @@ func TestLoad(t *testing.T) {
 		InitLoad string
 		res      string
 	}{
-		{InitLoad: "{\"user_id\": 1,\"ws_id\": 1}", res: "{ \"card_id\": [1,2,3,4,5]}"},
-		{InitLoad: "{\"user_id\": 2,\"ws_id\": 1}", res: "{ \"card_id\": []}"},
+		{InitLoad: "{\"user_id\": 1,\"ws_id\": 1}",
+			res: "{ \"card_id\": [1,2,3,4,5]}"},
+		{InitLoad: "{\"user_id\": 2,\"ws_id\": 1}",
+			res: "{ \"card_id\": []}"},
 	}
 	for _, tt := range loadTest {
-		request, _ := http.NewRequest("POST", "/load", bytes.NewBufferString(tt.InitLoad))
+		request, _ := http.NewRequest("POST", "/load",
+			bytes.NewBufferString(tt.InitLoad))
 		result := httptest.NewRecorder()
 		r1.ServeHTTP(result, request)
 		if result.Body.String() != tt.res {
@@ -174,11 +186,14 @@ func TestNbCard(t *testing.T) {
 		InitNbCard string
 		res        string
 	}{
-		{InitNbCard: "{\"user_id\": 1,\"ws_id\": 1}", res: "{\"nb_card\": 5}"},
-		{InitNbCard: "{\"user_id\": 2,\"ws_id\": 1}", res: "{\"nb_card\": 0}"},
+		{InitNbCard: "{\"user_id\": 1,\"ws_id\": 1}",
+			res: "{\"nb_card\": 5}"},
+		{InitNbCard: "{\"user_id\": 2,\"ws_id\": 1}",
+			res: "{\"nb_card\": 0}"},
 	}
 	for _, tt := range NbCardTest {
-		request, _ := http.NewRequest("POST", "/nbcard", bytes.NewBufferString(tt.InitNbCard))
+		request, _ := http.NewRequest("POST", "/nbcard",
+			bytes.NewBufferString(tt.InitNbCard))
 		result := httptest.NewRecorder()
 		r1.ServeHTTP(result, request)
 		if result.Body.String() != tt.res {
@@ -197,11 +212,14 @@ func TestTag(t *testing.T) {
 		InitTag string
 		res     string
 	}{
-		{InitTag: "{\"stack_id\":1, \"tag_val\":\"I am tagged\"}", res: "{\"tagged\": true}"},
-		{InitTag: "{\"stack_id\":1, \"tag_val\":\"Second tag for me !\"}", res: "{\"tagged\": true}"},
+		{InitTag: "{\"stack_id\":1, \"tag_val\":\"I am tagged\"}",
+			res: "{\"tagged\": true}"},
+		{InitTag: "{\"stack_id\":1, \"tag_val\":\"Second tag for me !\"}",
+			res: "{\"tagged\": true}"},
 	}
 	for _, tt := range TagTest {
-		request, _ := http.NewRequest("POST", "/tag", bytes.NewBufferString(tt.InitTag))
+		request, _ := http.NewRequest("POST", "/tag",
+			bytes.NewBufferString(tt.InitTag))
 		result := httptest.NewRecorder()
 		r1.ServeHTTP(result, request)
 		if result.Body.String() != tt.res {
@@ -220,10 +238,12 @@ func TestGetTag(t *testing.T) {
 		InitGetTag string
 		res        string
 	}{
-		{InitGetTag: "{\"stack_id\":1}", res: "{\"tags:\":[\"I am tagged\",\"Second tag for me !\"]}"},
+		{InitGetTag: "{\"stack_id\":1}",
+			res: "{\"tags:\":[\"I am tagged\",\"Second tag for me !\"]}"},
 	}
 	for _, tt := range GetTagTest {
-		request, _ := http.NewRequest("POST", "/gettag", bytes.NewBufferString(tt.InitGetTag))
+		request, _ := http.NewRequest("POST", "/gettag",
+			bytes.NewBufferString(tt.InitGetTag))
 		result := httptest.NewRecorder()
 		r1.ServeHTTP(result, request)
 		if result.Body.String() != tt.res {
@@ -242,10 +262,12 @@ func TestCard(t *testing.T) {
 		InitCard string
 		res      string
 	}{
-		{InitCard: "{\"card_id\":1, \"user_id\":1, \"ws_id\":1}", res: "{\"img\": \"http://147.135.194.248/img/aimant_du_changement.png\", \"text\": {\"fr\": \"Aimant du changement\", \"eng\": \"Change beloved\"}}"},
+		{InitCard: "{\"card_id\":1, \"user_id\":1, \"ws_id\":1}",
+			res: "{\"img\": \"http://147.135.194.248/img/aimant_du_changement.png\", \"text\": {\"fr\": \"Aimant du changement\", \"eng\": \"Change beloved\"}}"},
 	}
 	for _, tt := range CardTest {
-		request, _ := http.NewRequest("POST", "/card", bytes.NewBufferString(tt.InitCard))
+		request, _ := http.NewRequest("POST", "/card",
+			bytes.NewBufferString(tt.InitCard))
 		result := httptest.NewRecorder()
 		r1.ServeHTTP(result, request)
 		if result.Body.String() != tt.res {
