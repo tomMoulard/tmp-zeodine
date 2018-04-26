@@ -69,9 +69,9 @@ func TestNewuser(t *testing.T) {
 		if result.Body.String() != tt.quer {
 			t.Errorf("Got: %s,  want: %s", result.Body.String(), tt.quer)
 		}
-		// if result.Code != 200 {
-		// 	t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
-		// }
+		if result.Code != 200 {
+			t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
+		}
 	}
 }
 
@@ -93,9 +93,9 @@ func TestCreateWs(t *testing.T) {
 		if result.Body.String() != tt.res {
 			t.Errorf("Got: %s,  want: %s", result.Body.String(), tt.res)
 		}
-		// if result.Code != 200 {
-		// 	t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
-		// }
+		if result.Code != 200 {
+			t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
+		}
 	}
 }
 
@@ -115,9 +115,9 @@ func Testws(t *testing.T) {
 		if result.Body.String() != tt.res {
 			t.Errorf("Got: %s,  want: %s", result.Body.String(), tt.res)
 		}
-		// if result.Code != 200 {
-		// 	t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
-		// }
+		if result.Code != 200 {
+			t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
+		}
 	}
 }
 
@@ -138,9 +138,9 @@ func TestSave(t *testing.T) {
 		if result.Body.String() != tt.res {
 			t.Errorf("Got: %s,  want: %s", result.Body.String(), tt.res)
 		}
-		// if result.Code != 200 {
-		// 	t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
-		// }
+		if result.Code != 200 {
+			t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
+		}
 	}
 }
 
@@ -161,9 +161,9 @@ func TestLoad(t *testing.T) {
 		if result.Body.String() != tt.res {
 			t.Errorf("Got: %s,  want: %s", result.Body.String(), tt.res)
 		}
-		// if result.Code != 200 {
-		// 	t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
-		// }
+		if result.Code != 200 {
+			t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
+		}
 	}
 }
 
@@ -184,9 +184,9 @@ func TestNbCard(t *testing.T) {
 		if result.Body.String() != tt.res {
 			t.Errorf("Got: %s,  want: %s", result.Body.String(), tt.res)
 		}
-		// if result.Code != 200 {
-		// 	t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
-		// }
+		if result.Code != 200 {
+			t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
+		}
 	}
 }
 
@@ -195,7 +195,7 @@ func TestTag(t *testing.T) {
 	r1.POST("/tag", dbm.tag)
 	var TagTest = []struct {
 		InitTag string
-		res        string
+		res     string
 	}{
 		{InitTag: "{\"stack_id\":1, \"tag_val\":\"I am tagged\"}", res: "{\"tagged\": true}"},
 		{InitTag: "{\"stack_id\":1, \"tag_val\":\"Second tag for me !\"}", res: "{\"tagged\": true}"},
@@ -207,9 +207,9 @@ func TestTag(t *testing.T) {
 		if result.Body.String() != tt.res {
 			t.Errorf("Got: %s,  want: %s", result.Body.String(), tt.res)
 		}
-		// if result.Code != 200 {
-		// 	t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
-		// }
+		if result.Code != 200 {
+			t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
+		}
 	}
 }
 
@@ -229,9 +229,9 @@ func TestGetTag(t *testing.T) {
 		if result.Body.String() != tt.res {
 			t.Errorf("Got: %s,  want: %s", result.Body.String(), tt.res)
 		}
-		// if result.Code != 200 {
-		// 	t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
-		// }
+		if result.Code != 200 {
+			t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
+		}
 	}
 }
 
@@ -240,7 +240,7 @@ func TestCard(t *testing.T) {
 	r1.POST("/card", dbm.card)
 	var CardTest = []struct {
 		InitCard string
-		res        string
+		res      string
 	}{
 		{InitCard: "{\"card_id\":1, \"user_id\":1, \"ws_id\":1}", res: "{\"img\": \"http://147.135.194.248/img/aimant_du_changement.png\", \"text\": {\"fr\": \"Aimant du changement\", \"eng\": \"Change beloved\"}}"},
 	}
@@ -251,8 +251,8 @@ func TestCard(t *testing.T) {
 		if result.Body.String() != tt.res {
 			t.Errorf("Got: %s,  want: %s", result.Body.String(), tt.res)
 		}
-		// if result.Code != 200 {
-		// 	t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
-		// }
+		if result.Code != 200 {
+			t.Errorf("Error code ! Got: %d,  want: %d", result.Code, 200)
+		}
 	}
 }
